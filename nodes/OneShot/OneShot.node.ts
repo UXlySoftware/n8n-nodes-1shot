@@ -1,29 +1,29 @@
 import { INodeType, INodeTypeDescription, NodeConnectionType } from 'n8n-workflow';
-import { httpVerbFields, httpVerbOperations } from './HttpVerbDescription';
+import { transactionOperationsFields } from './TransactionDescription';
 
-export class HttpBin implements INodeType {
+export class OneShot implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'HttpBin',
-		name: 'httpBin',
-		icon: { light: 'file:httpbin.svg', dark: 'file:httpbin.svg' },
+		displayName: '1Shot',
+		name: 'oneShot',
+		icon: { light: 'file:oneshot.svg', dark: 'file:oneshot.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Interact with HttpBin API',
+		description: 'Interact with the blockchain and web3 via 1Shot API',
 		defaults: {
-			name: 'HttpBin',
+			name: '1Shot',
 		},
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
 		usableAsTool: true,
 		credentials: [
 			{
-				name: 'httpbinApi',
-				required: false,
+				name: '1shotApi',
+				required: true,
 			},
 		],
 		requestDefaults: {
-			baseURL: 'https://httpbin.org',
+			baseURL: 'https://api.1shotapi.com/v0',
 			url: '',
 			headers: {
 				Accept: 'application/json',
@@ -37,7 +37,7 @@ export class HttpBin implements INodeType {
 		 *
 		 * https://docs.n8n.io/integrations/creating-nodes/code/create-first-node/#resources-and-operations
 		 *
-		 * In our example, the operations are separated into their own file (HTTPVerbDescription.ts)
+		 * In our example, the operations are separated into their own file (TransactionDescription.ts)
 		 * to keep this class easy to read.
 		 *
 		 */
@@ -49,15 +49,13 @@ export class HttpBin implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'HTTP Verb',
-						value: 'httpVerb',
+						name: 'Transaction',
+						value: 'transaction',
 					},
 				],
-				default: 'httpVerb',
+				default: 'transaction',
 			},
-
-			...httpVerbOperations,
-			...httpVerbFields,
+			...transactionOperationsFields,
 		],
 	};
 }

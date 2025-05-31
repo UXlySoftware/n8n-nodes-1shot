@@ -1,0 +1,18 @@
+version: '3.8'
+
+volumes:
+  n8n_storage:
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    ports:
+      - 5678:5678
+    volumes:
+      - n8n_storage:/home/node/.n8n
+      - ./:/home/node/.n8n/custom
+    environment:
+      - N8N_HOST=f6d9-136-24-140-230.ngrok-free.app
+      - N8N_PORT=5678
+      - N8N_CUSTOM_EXTENSIONS="/home/node/.n8n/custom"
