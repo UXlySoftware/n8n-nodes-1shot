@@ -43,17 +43,38 @@ export const transactionOperations: INodeProperties[] = [
 
 const transactionFields: INodeProperties[] = [
 	{
-		displayName: 'Transaction ID',
+		displayName: 'Endpoint Name or ID',
 		name: 'transactionId',
-		type: 'string',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'loadTransactionExecutionOptions',
+		},
 		required: true,
 		displayOptions: {
 			show: {
 				resource: ['transaction'],
+				operation: ['execute'],
 			},
 		},
 		default: '',
-		description: 'The ID of the transaction to execute or read from',
+		description: 'Choose from the list, or specify a Transaction ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+	},
+	{
+		displayName: 'Endpoint Name or ID',
+		name: 'transactionId',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'loadTransactionReadOptions',
+		},
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['transaction'],
+				operation: ['read'],
+			},
+		},
+		default: '',
+		description: 'Choose from the list, or specify a Transaction ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Parameters',
