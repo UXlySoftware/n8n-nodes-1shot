@@ -66,7 +66,7 @@ const transactionFields: INodeProperties[] = [
 			},
 		},
 		default: '{}',
-		description: 'The parameters to pass to the transaction function',
+		description: 'The parameters to pass to the transaction function. Enter a JSON object (e.g., {"to": "0x3e6a2f0CBA03d293B54c9fCF354948903007a798", "amount": "10000"}).',
 	},
 	{
 		displayName: 'Additional Fields',
