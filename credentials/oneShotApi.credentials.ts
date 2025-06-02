@@ -10,7 +10,6 @@ export class oneShotApi implements ICredentialType {
 	documentationUrl = 'https://docs.1shotapi.com';
 
 	properties: INodeProperties[] = [
-		
 		{
 			displayName: 'Grant Type',
 			name: 'grantType',
@@ -52,13 +51,6 @@ export class oneShotApi implements ICredentialType {
 			name: 'businessId',
 			type: 'string',
 			default: '',
-		},
-		{
-			displayName: 'Token Expiration',
-			name: 'tokenExpiration',
-			type: 'hidden',
-			default: 3600,
-			description: 'Token expiration time in seconds (default: 3600)',
 		},
 	];
 }

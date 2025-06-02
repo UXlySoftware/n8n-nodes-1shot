@@ -1,8 +1,8 @@
 import { INodeType, INodeTypeDescription, NodeConnectionType, INodeProperties, IExecuteFunctions, NodeOperationError } from 'n8n-workflow';
-import { transactionOperationsFields } from './TransactionDescription';
-import { escrowWalletOperationsFields } from './EscrowWalletDescription';
-import { loadTransactionExecutionOptions, loadTransactionReadOptions } from './options';
-import { promptOperationsFields } from './PromptDescription';
+import { transactionOperationsFields } from './descriptions/TransactionDescription';
+import { escrowWalletOperationsFields } from './descriptions/EscrowWalletDescription';
+import { loadTransactionExecutionOptions, loadTransactionReadOptions } from './executions/options';
+import { promptOperationsFields } from './descriptions/PromptDescription';
 
 export class OneShot implements INodeType {
 	description: INodeTypeDescription = {
@@ -122,8 +122,9 @@ export class OneShot implements INodeType {
 						oauth2: {
 							tokenType: 'Bearer',
 							keepBearer: true,
-							includeCredentialsOnRefresh: true,
+							includeCredentialsOnRefreshOnBody: true,
 							property: 'access_token',
+							tokenExpiredStatusCode: 403,
 						}
 					};
 
@@ -160,8 +161,9 @@ export class OneShot implements INodeType {
 						oauth2: {
 							tokenType: 'Bearer',
 							keepBearer: true,
-							includeCredentialsOnRefresh: true,
+							includeCredentialsOnRefreshOnBody: true,
 							property: 'access_token',
+							tokenExpiredStatusCode: 403,
 						}
 					};
 
@@ -171,11 +173,44 @@ export class OneShot implements INodeType {
 				} else {
 					throw new NodeOperationError(this.getNode(), `Unsupported operation: ${operation}`);
 				}
-			} else if (resource === 'prompt') {
-				const query = this.getNodeParameter('query', i) as string;
+			} else if (resource === 'escrowWallet') {
 				const chainId = this.getNodeParameter('chainId', i) as string;
+				const credentials = await this.getCredentials('oneShotOAuth2Api');
+        		const businessId = credentials.businessId as string;
 
+				if (operation === 'list') {
+					const options = {
+						method: "GET" as const,
+						url:`/business/${businessId}/wallets`,
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json',
+						},
+						qs: {chainId},
+						json: true,
+						baseURL: 'https://api.1shotapi.com/v0',
+					};
+
+					this.logger.debug('Making request for escrow wallets', { options });
+
+					const additionalCredentialOptions = {
+						oauth2: {
+							tokenType: 'Bearer',
+							keepBearer: true,
+							includeCredentialsOnRefresh: true,
+							property: 'access_token',
+							tokenExpiredStatusCode: 403,
+						}
+					};
+
+					const response = await this.helpers.requestWithAuthentication.call(this, 'oneShotOAuth2Api', options, additionalCredentialOptions);
+					this.logger.debug('Response received for escrow wallets', { response });
+					returnData.push(response);
+				}
+			} else if (resource === 'prompt') {
 				if (operation === 'search') {
+					const query = this.getNodeParameter('query', i) as string;
+					const chainId = this.getNodeParameter('chainId', i) as string;
 					const options = {
 						method: "POST" as const,
 						url:`/contracts/descriptions/search`,
@@ -195,8 +230,47 @@ export class OneShot implements INodeType {
 						oauth2: {
 							tokenType: 'Bearer',
 							keepBearer: true,
-							includeCredentialsOnRefresh: true,
+							includeCredentialsOnRefreshOnBody: true,
 							property: 'access_token',
+							tokenExpiredStatusCode: 403,
+						}
+					};
+
+					const response = await this.helpers.requestWithAuthentication.call(this, 'oneShotOAuth2Api', options, additionalCredentialOptions);
+					this.logger.debug('Response received for 1Shot Prompts', { response });
+					returnData.push(response);
+				} else if (operation === 'assureTools') {
+					const credentials = await this.getCredentials('oneShotOAuth2Api');
+        			const businessId = credentials.businessId as string;
+					const contractAddress = this.getNodeParameter('contractAddress', i) as string;
+					const contractDescriptionId = this.getNodeParameter('contractDescriptionId', i) as string;
+					const escrowWalletId = this.getNodeParameter('escrowWalletId', i) as string;
+					const chainId = this.getNodeParameter('chainId', i) as string;
+
+					const options = {
+						method: "POST" as const,
+						url:`/business/${businessId}/transactions/contract`,
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json',
+						},
+						body: {
+							chain: chainId,
+							contractAddress,
+							escrowWalletId,
+							contractDescriptionId,
+						},
+						json: true,
+						baseURL: 'https://api.1shotapi.com/v0',
+					};
+
+					const additionalCredentialOptions = {
+						oauth2: {
+							tokenType: 'Bearer',
+							keepBearer: true,
+							includeCredentialsOnRefreshOnBody: true,
+							property: 'access_token',
+							tokenExpiredStatusCode: 403,
 						}
 					};
 

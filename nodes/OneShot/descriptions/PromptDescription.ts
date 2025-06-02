@@ -18,6 +18,12 @@ export const promptOperations: INodeProperties[] = [
 				description: 'Search for prompts with semantic search',
 				action: 'Search prompts',
 			},
+			{
+				name: 'Assure Tools',
+				value: 'assureTools',
+				description: 'Make sure you have a set of tools ready to use based on your chosen prompt',
+				action: 'Assure tools',
+			},
 		],
 		default: 'search',
 	},
@@ -72,13 +78,52 @@ const promptFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['prompt'],
-				operation: ['search'],
+				operation: ['search', "assureTools"],
 			},
 		},
 		default: '1',
 		description: 'Choose from the list, or specify a Chain ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
-	
+	{
+		displayName: 'Contract Address',
+		name: 'contractAddress',
+		type: 'string',
+		default: '',
+		description: 'Enter the contract address of the contract you want to use',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['prompt'],
+				operation: ['assureTools'],
+			},
+		},
+	},
+	{
+		displayName: 'Prompt ID',
+		name: 'contractDescriptionId',
+		type: 'string',
+		default: '',
+		description: 'Enter the ID of the prompt you want to use. If not provided, the highest-ranked Contract Description for the chain and contract address will be used.',
+		displayOptions: {
+			show: {
+				resource: ['prompt'],
+				operation: ['assureTools'],
+			},
+		},
+	},
+	{
+		displayName: 'Escrow Wallet ID',
+		name: 'escrowWalletId',
+		type: 'string',
+		default: '',
+		description: 'Enter the ID of the escrow wallet you want to use for any newly created tools',
+		displayOptions: {
+			show: {
+				resource: ['prompt'],
+				operation: ['assureTools'],
+			},
+		},
+	},
 ];
 
 export const promptOperationsFields: INodeProperties[] = [
