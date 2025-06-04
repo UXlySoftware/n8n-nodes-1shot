@@ -52,7 +52,7 @@ jobs:
 
     - name: Deploy to Cloud Run
       run: |
-        IMAGE_URI=docker.n8n.io/n8nio/n8n
+        IMAGE_URI=us-central1-docker.pkg.dev/shot-dev/n8n-docker-registry/n8nio/n8n
         # Deploy to Cloud Run
         gcloud run deploy n8n \
           --image=$IMAGE_URI\
