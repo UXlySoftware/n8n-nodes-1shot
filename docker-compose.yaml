@@ -1,11 +1,25 @@
-version: '3.8'
+name: 1shot-n8n-node
 
 volumes:
   n8n_storage:
 
 services:
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok
+    command:
+      - "http"
+      - "http://n8n:5678"
+      - "--url=${NGROK_DOMAIN}"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+      NGROK_DOMAIN: ${NGROK_DOMAIN}
+    ports:
+      - 4040:4040
+
   n8n:
     image: docker.n8n.io/n8nio/n8n
+    container_name: n8n
     restart: always
     ports:
       - 5678:5678
@@ -14,10 +28,10 @@ services:
       - ./:/home/node/.n8n/custom/n8n-nodes-1shot
       # - ./:/home/node/.n8n/custom/node_modules/n8n-nodes-1shot
     environment:
-      - N8N_HOST=f6d9-136-24-140-230.ngrok-free.app
+      - N8N_HOST=${NGROK_DOMAIN}
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
-      - N8N_EDITOR_BASE_URL=https://f6d9-136-24-140-230.ngrok-free.app
+      - N8N_EDITOR_BASE_URL=https://${NGROK_DOMAIN}
       - N8N_COMMUNITY_PACKAGES_ENABLED=true
       # - N8N_CUSTOM_EXTENSIONS=/home/node/.n8n/custom/node_modules/n8n-nodes-1shot
       - N8N_CUSTOM_EXTENSIONS=/home/node/.n8n/custom/

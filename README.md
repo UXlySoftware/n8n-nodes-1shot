@@ -1,47 +1,32 @@
 ![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
 
-# n8n-nodes-starter
+# 1Shot API n8n Node
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](https://n8n.io). It includes the node linter and other dependencies.
+This repo contains the implementation of the [1Shot API](https://1shotapi.com) n8n node. 1Shot API is a powerful managed wallet and transaction service for the EVM ecosystem. It lets you read and write to smart contracts on any public EVM network with simple API calls. It ensures transactions are confirmed (handling retries and gas optimization) and sends webhook callbacks when they are finalized, making it perfect for AI worflow platforms like [n8n](https://n8n.io/). 
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+It also allows smart contract functions to be used like tools by agents; 1Shot Prompts provides a contract library with detailed prompts at the contract, function, input and output level so that agents and LLMs can better reason about how to use smart contracts to fullfil a user task. Additionally, 1Shot Prompts lets humans and agents search for smart contracts semantically, so you don't have manually find your target smart contract by parsing through blockscanners. 
 
-If you would like your node to be available on n8n cloud you can also [submit your node for verification](https://docs.n8n.io/integrations/creating-nodes/deploy/submit-community-nodes/).
+## Running the Node
 
-## Prerequisites
+First, clone this repository and copy `example.env` into `docker-compose.env`:
 
-You need the following installed on your development machine:
+```sh
+git clone https://github.com/UXlySoftware/n8n-nodes-1shot.git
+cd n8n-nodes-1shot
+cp example.env docker-compose.env
+```
 
-* [git](https://git-scm.com/downloads)
-* Node.js and npm. Minimum version Node 20. You can find instructions on how to install both using nvm (Node Version Manager) for Linux, Mac, and WSL [here](https://github.com/nvm-sh/nvm). For Windows users, refer to Microsoft's guide to [Install NodeJS on Windows](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows).
-* Install n8n with:
-  ```
-  npm install n8n -g
-  ```
-* Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
+Next, make a free account on 1Shot API and create an [API Key and Secret](https://app.1shotapi.com/api-keys), you'll use this to authenticate the 1Shot API node in n8n. You'll also want to grab your 1Shot API business ID from your [organization's detail](https://app.1shotapi.com/organizations) page. 
 
-## Using this starter
+Finally, make a free [ngrok](https://ngrok.com/) account, its a tunneling service that will allow you to log into your n8n node from the internet. Create a free [ngrok domain](https://dashboard.ngrok.com/domains) and past the domain into the `NGROK_DOMAIN` variable in `docker-compose.env`. Lastly, grab your [ngrok auth token ](https://dashboard.ngrok.com/get-started/your-authtoken) and paste it into the `NGROK_AUTHTOKEN` variable in `docker-compose.env`. 
 
-These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
+Make sure you have [docker](https://docker.com) installed on the machine you are going to run n8n on and start up the node:
 
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
-   ```
-   git clone https://github.com/<your organization>/<your-repo-name>.git
-   ```
-3. Run `npm i` to install dependencies.
-4. Open the project in your editor.
-5. Browse the examples in `/nodes` and `/credentials`. Modify the examples, or replace them with your own nodes.
-6. Update the `package.json` to match your details.
-7. Run `npm run lint` to check for errors or `npm run lintfix` to automatically fix errors when possible.
-8. Test your node locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
-9. Replace this README with documentation for your node. Use the [README_TEMPLATE](README_TEMPLATE.md) to get started.
-10. Update the LICENSE file to use your details.
-11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.
+```sh
+docker compose --env-file docker-compose.env up -d
+```
 
-## More information
-
-Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
+You should now be able to access the [ngrok inspection dashboard](http://localhost:4040/). It should show a link to your ngrok domain that you can click to take you to the n8n login page for your n8n stack. 
 
 ## License
 
