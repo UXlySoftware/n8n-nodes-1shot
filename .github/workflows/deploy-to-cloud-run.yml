@@ -51,7 +51,7 @@ jobs:
 
     - name: Deploy to Cloud Run
       run: |
-        export SQL_CONNECTION=$(gcloud sql instances describe n8n --format="value(shot-dev:us-central1:n8n)")
+        export SQL_CONNECTION=$(gcloud sql instances describe n8n --format="value(connectionName)")
         IMAGE_URI=us-central1-docker.pkg.dev/shot-dev/n8n-docker-registry/n8nio/n8n
         # Deploy to Cloud Run
         gcloud run deploy n8n \
