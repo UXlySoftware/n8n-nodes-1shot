@@ -68,12 +68,12 @@ const escrowWalletFields: INodeProperties[] = [
 			},
 		},
 		default: '1',
-		description: 'Choose from the list, or specify a Chain ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description:
+			'Choose from the list, or specify a Chain ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
-	
 ];
 
 export const escrowWalletOperationsFields: INodeProperties[] = [
 	...escrowWalletOperations,
 	...escrowWalletFields,
-]; 
+];

@@ -1,4 +1,11 @@
-import { INodeType, INodeTypeDescription, NodeConnectionType, INodeProperties, IExecuteFunctions, NodeOperationError } from 'n8n-workflow';
+import {
+	INodeType,
+	INodeTypeDescription,
+	NodeConnectionType,
+	INodeProperties,
+	IExecuteFunctions,
+	NodeOperationError,
+} from 'n8n-workflow';
 import { transactionOperationsFields } from './descriptions/TransactionDescription';
 import { escrowWalletOperationsFields } from './descriptions/EscrowWalletDescription';
 import { loadTransactionExecutionOptions, loadTransactionReadOptions } from './executions/options';
@@ -97,7 +104,7 @@ export class OneShot implements INodeType {
 					url = `/transactions/${transactionId}/execute`;
 					// Parse the params JSON string into an object
 					const parsedParams = JSON.parse(paramsString);
-					
+
 					// Wrap params in the expected format
 					const body = {
 						params: parsedParams,
@@ -108,7 +115,7 @@ export class OneShot implements INodeType {
 						method,
 						url,
 						headers: {
-							'Accept': 'application/json',
+							Accept: 'application/json',
 							'Content-Type': 'application/json',
 						},
 						body,
@@ -125,10 +132,15 @@ export class OneShot implements INodeType {
 							includeCredentialsOnRefreshOnBody: true,
 							property: 'access_token',
 							tokenExpiredStatusCode: 403,
-						}
+						},
 					};
 
-					const response = await this.helpers.requestWithAuthentication.call(this, 'oneShotOAuth2Api', options, additionalCredentialOptions);
+					const response = await this.helpers.requestWithAuthentication.call(
+						this,
+						'oneShotOAuth2Api',
+						options,
+						additionalCredentialOptions,
+					);
 					this.logger.debug('Response received', { response });
 					returnData.push(response);
 				} else if (operation === 'read') {
@@ -136,7 +148,7 @@ export class OneShot implements INodeType {
 
 					// Parse the params JSON string into an object
 					const parsedParams = JSON.parse(paramsString);
-					
+
 					// Wrap params in the expected format
 					const body = {
 						params: parsedParams,
@@ -147,7 +159,7 @@ export class OneShot implements INodeType {
 						method,
 						url,
 						headers: {
-							'Accept': 'application/json',
+							Accept: 'application/json',
 							'Content-Type': 'application/json',
 						},
 						body,
@@ -164,10 +176,15 @@ export class OneShot implements INodeType {
 							includeCredentialsOnRefreshOnBody: true,
 							property: 'access_token',
 							tokenExpiredStatusCode: 403,
-						}
+						},
 					};
 
-					const response = await this.helpers.requestWithAuthentication.call(this, 'oneShotOAuth2Api', options, additionalCredentialOptions);
+					const response = await this.helpers.requestWithAuthentication.call(
+						this,
+						'oneShotOAuth2Api',
+						options,
+						additionalCredentialOptions,
+					);
 					this.logger.debug(`Response received: "${response}"`, { response });
 					returnData.push(response);
 				} else {
@@ -176,17 +193,17 @@ export class OneShot implements INodeType {
 			} else if (resource === 'escrowWallet') {
 				const chainId = this.getNodeParameter('chainId', i) as string;
 				const credentials = await this.getCredentials('oneShotOAuth2Api');
-        		const businessId = credentials.businessId as string;
+				const businessId = credentials.businessId as string;
 
 				if (operation === 'list') {
 					const options = {
-						method: "GET" as const,
-						url:`/business/${businessId}/wallets`,
+						method: 'GET' as const,
+						url: `/business/${businessId}/wallets`,
 						headers: {
-							'Accept': 'application/json',
+							Accept: 'application/json',
 							'Content-Type': 'application/json',
 						},
-						qs: {chainId},
+						qs: { chainId },
 						json: true,
 						baseURL: 'https://api.1shotapi.com/v0',
 					};
@@ -200,10 +217,15 @@ export class OneShot implements INodeType {
 							includeCredentialsOnRefresh: true,
 							property: 'access_token',
 							tokenExpiredStatusCode: 403,
-						}
+						},
 					};
 
-					const response = await this.helpers.requestWithAuthentication.call(this, 'oneShotOAuth2Api', options, additionalCredentialOptions);
+					const response = await this.helpers.requestWithAuthentication.call(
+						this,
+						'oneShotOAuth2Api',
+						options,
+						additionalCredentialOptions,
+					);
 					this.logger.debug('Response received for escrow wallets', { response });
 					returnData.push(response);
 				}
@@ -212,15 +234,15 @@ export class OneShot implements INodeType {
 					const query = this.getNodeParameter('query', i) as string;
 					const chainId = this.getNodeParameter('chainId', i) as string;
 					const options = {
-						method: "POST" as const,
-						url:`/contracts/descriptions/search`,
+						method: 'POST' as const,
+						url: `/contracts/descriptions/search`,
 						headers: {
-							'Accept': 'application/json',
+							Accept: 'application/json',
 							'Content-Type': 'application/json',
 						},
 						body: {
 							query,
-							chain: chainId
+							chain: chainId,
 						},
 						json: true,
 						baseURL: 'https://api.1shotapi.com/v0',
@@ -233,25 +255,30 @@ export class OneShot implements INodeType {
 							includeCredentialsOnRefreshOnBody: true,
 							property: 'access_token',
 							tokenExpiredStatusCode: 403,
-						}
+						},
 					};
 
-					const response = await this.helpers.requestWithAuthentication.call(this, 'oneShotOAuth2Api', options, additionalCredentialOptions);
+					const response = await this.helpers.requestWithAuthentication.call(
+						this,
+						'oneShotOAuth2Api',
+						options,
+						additionalCredentialOptions,
+					);
 					this.logger.debug('Response received for 1Shot Prompts', { response });
 					returnData.push(response);
 				} else if (operation === 'assureTools') {
 					const credentials = await this.getCredentials('oneShotOAuth2Api');
-        			const businessId = credentials.businessId as string;
+					const businessId = credentials.businessId as string;
 					const contractAddress = this.getNodeParameter('contractAddress', i) as string;
 					const contractDescriptionId = this.getNodeParameter('contractDescriptionId', i) as string;
 					const escrowWalletId = this.getNodeParameter('escrowWalletId', i) as string;
 					const chainId = this.getNodeParameter('chainId', i) as string;
 
 					const options = {
-						method: "POST" as const,
-						url:`/business/${businessId}/transactions/contract`,
+						method: 'POST' as const,
+						url: `/business/${businessId}/transactions/contract`,
 						headers: {
-							'Accept': 'application/json',
+							Accept: 'application/json',
 							'Content-Type': 'application/json',
 						},
 						body: {
@@ -271,10 +298,15 @@ export class OneShot implements INodeType {
 							includeCredentialsOnRefreshOnBody: true,
 							property: 'access_token',
 							tokenExpiredStatusCode: 403,
-						}
+						},
 					};
 
-					const response = await this.helpers.requestWithAuthentication.call(this, 'oneShotOAuth2Api', options, additionalCredentialOptions);
+					const response = await this.helpers.requestWithAuthentication.call(
+						this,
+						'oneShotOAuth2Api',
+						options,
+						additionalCredentialOptions,
+					);
 					this.logger.debug('Response received for 1Shot Prompts', { response });
 					returnData.push(response);
 				}

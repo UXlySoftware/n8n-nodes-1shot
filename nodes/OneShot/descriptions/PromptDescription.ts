@@ -35,7 +35,8 @@ const promptFields: INodeProperties[] = [
 		name: 'query',
 		type: 'string',
 		default: '',
-		description: 'Enter a query to search 1Shot Prompts for tools you can use in your dynamic workflow',
+		description:
+			'Enter a query to search 1Shot Prompts for tools you can use in your dynamic workflow',
 		required: true,
 		displayOptions: {
 			show: {
@@ -78,11 +79,12 @@ const promptFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['prompt'],
-				operation: ['search', "assureTools"],
+				operation: ['search', 'assureTools'],
 			},
 		},
 		default: '1',
-		description: 'Choose from the list, or specify a Chain ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description:
+			'Choose from the list, or specify a Chain ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Contract Address',
@@ -103,7 +105,8 @@ const promptFields: INodeProperties[] = [
 		name: 'contractDescriptionId',
 		type: 'string',
 		default: '',
-		description: 'Enter the ID of the prompt you want to use. If not provided, the highest-ranked Contract Description for the chain and contract address will be used.',
+		description:
+			'Enter the ID of the prompt you want to use. If not provided, the highest-ranked Contract Description for the chain and contract address will be used.',
 		displayOptions: {
 			show: {
 				resource: ['prompt'],
@@ -126,7 +129,4 @@ const promptFields: INodeProperties[] = [
 	},
 ];
 
-export const promptOperationsFields: INodeProperties[] = [
-	...promptOperations,
-	...promptFields,
-]; 
+export const promptOperationsFields: INodeProperties[] = [...promptOperations, ...promptFields];

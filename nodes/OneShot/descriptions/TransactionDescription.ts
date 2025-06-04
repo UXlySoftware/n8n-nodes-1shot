@@ -57,7 +57,8 @@ const transactionFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Choose from the list, or specify a Transaction ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description:
+			'Choose from the list, or specify a Transaction ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Endpoint Name or ID',
@@ -74,7 +75,8 @@ const transactionFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Choose from the list, or specify a Transaction ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description:
+			'Choose from the list, or specify a Transaction ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Parameters',
@@ -87,7 +89,8 @@ const transactionFields: INodeProperties[] = [
 			},
 		},
 		default: '{}',
-		description: 'The parameters to pass to the transaction function. Enter a JSON object (e.g., {"to": "0x3e6a2f0CBA03d293B54c9fCF354948903007a798", "amount": "10000"}).',
+		description:
+			'The parameters to pass to the transaction function. Enter a JSON object (e.g., {"to": "0x3e6a2f0CBA03d293B54c9fCF354948903007a798", "amount": "10000"}).',
 	},
 	{
 		displayName: 'Additional Fields',
@@ -130,4 +133,4 @@ const transactionFields: INodeProperties[] = [
 export const transactionOperationsFields: INodeProperties[] = [
 	...transactionOperations,
 	...transactionFields,
-]; 
+];
