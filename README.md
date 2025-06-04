@@ -20,7 +20,7 @@ Next, make a free account on 1Shot API and create an [API Key and Secret](https:
 
 Finally, make a free [ngrok](https://ngrok.com/) account, its a tunneling service that will allow you to log into your n8n node from the internet. Create a free [ngrok domain](https://dashboard.ngrok.com/domains) and past the domain into the `NGROK_DOMAIN` variable in `docker-compose.env`. Lastly, grab your [ngrok auth token ](https://dashboard.ngrok.com/get-started/your-authtoken) and paste it into the `NGROK_AUTHTOKEN` variable in `docker-compose.env`. 
 
-Make sure you have [docker](https://docker.com) installed on the machine you are going to run n8n on and start up the node:
+Make sure you have [docker](https://docs.n8n.io/hosting/installation/docker/) installed on the machine you are going to run n8n on and start up the node:
 
 ```sh
 docker compose --env-file docker-compose.env up -d
