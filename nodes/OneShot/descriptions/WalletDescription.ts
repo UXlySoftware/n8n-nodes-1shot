@@ -1,6 +1,6 @@
 import { INodeProperties } from 'n8n-workflow';
 
-export const escrowWalletOperations: INodeProperties[] = [
+export const walletOperations: INodeProperties[] = [
 	{
 		displayName: 'Operation',
 		name: 'operation',
@@ -8,28 +8,22 @@ export const escrowWalletOperations: INodeProperties[] = [
 		noDataExpression: true,
 		displayOptions: {
 			show: {
-				resource: ['escrowWallet'],
+				resource: ['wallet'],
 			},
 		},
 		options: [
 			{
-				name: 'List Escrow Wallets',
+				name: 'List Wallets',
 				value: 'list',
-				description: 'List escrow wallets for a given chain',
-				action: 'List escrow wallets',
-				routing: {
-					request: {
-						method: 'POST',
-						url: '=/transactions/{{$parameter.transactionId}}/execute',
-					},
-				},
+				description: 'List Wallets for a given chain',
+				action: 'List wallets',
 			},
 		],
 		default: 'list',
 	},
 ];
 
-const escrowWalletFields: INodeProperties[] = [
+const walletFields: INodeProperties[] = [
 	{
 		displayName: 'Chain Name or ID',
 		name: 'chainId',
@@ -63,7 +57,7 @@ const escrowWalletFields: INodeProperties[] = [
 		required: true,
 		displayOptions: {
 			show: {
-				resource: ['escrowWallet'],
+				resource: ['wallet'],
 				operation: ['list'],
 			},
 		},
@@ -73,7 +67,7 @@ const escrowWalletFields: INodeProperties[] = [
 	},
 ];
 
-export const escrowWalletOperationsFields: INodeProperties[] = [
-	...escrowWalletOperations,
-	...escrowWalletFields,
+export const walletOperationsFields: INodeProperties[] = [
+	...walletOperations,
+	...walletFields,
 ];

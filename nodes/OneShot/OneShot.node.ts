@@ -6,10 +6,12 @@ import {
 	IExecuteFunctions,
 	NodeOperationError,
 } from 'n8n-workflow';
-import { transactionOperationsFields } from './descriptions/TransactionDescription';
-import { escrowWalletOperationsFields } from './descriptions/EscrowWalletDescription';
-import { loadTransactionExecutionOptions, loadTransactionReadOptions } from './executions/options';
+import { contractMethodOperationsFields } from './descriptions/ContractMethodDescription';
+import { walletOperationsFields } from './descriptions/WalletDescription';
 import { promptOperationsFields } from './descriptions/PromptDescription';
+import { structOperationsFields } from './descriptions/StructDescription';
+import { transactionOperationsFields } from './descriptions/TransactionDescription';
+import { loadTransactionExecutionOptions, loadTransactionReadOptions } from './executions/options';
 
 export class OneShot implements INodeType {
 	description: INodeTypeDescription = {
@@ -59,23 +61,33 @@ export class OneShot implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Contract Method',
+						value: 'contractMethods',
+					},
+					{
+						name: 'Prompt',
+						value: 'prompts',
+					},
+					{
+						name: 'Struct',
+						value: 'structs',
+					},
+					{
 						name: 'Transaction',
-						value: 'transaction',
+						value: 'transactions',
 					},
 					{
-						name: 'Escrow Wallet',
-						value: 'escrowWallet',
-					},
-					{
-						name: '1Shot Prompt',
-						value: 'prompt',
+						name: 'Wallet',
+						value: 'wallets',
 					},
 				],
-				default: 'transaction',
+				default: 'contractMethods',
 			} as INodeProperties,
-			...transactionOperationsFields,
-			...escrowWalletOperationsFields,
+			...contractMethodOperationsFields,
+			...walletOperationsFields,
 			...promptOperationsFields,
+			...structOperationsFields,
+			...transactionOperationsFields,
 		],
 	};
 

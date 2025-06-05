@@ -13,119 +13,78 @@ export const transactionOperations: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Execute',
-				value: 'execute',
-				description: 'Execute a transaction on the blockchain',
-				action: 'Execute a transaction',
-				routing: {
-					request: {
-						method: 'POST',
-						url: '=/transactions/{{$parameter.transactionId}}/execute',
-					},
-				},
+				name: 'List Transactions',
+				value: 'list',
+				description: 'List Transactions with filters',
+				action: 'List transactions',
 			},
 			{
-				name: 'Read',
-				value: 'read',
-				description: 'Read data from a view or pure function',
-				action: 'Read data from a function',
-				routing: {
-					request: {
-						method: 'POST',
-						url: '=/transactions/{{$parameter.transactionId}}/read',
-					},
-				},
+				name: 'Get Transaction',
+				value: 'get',
+				description: 'Get a specific Transaction',
+				action: 'Get transaction',
 			},
 		],
-		default: 'execute',
+		default: 'list',
 	},
 ];
 
 const transactionFields: INodeProperties[] = [
 	{
-		displayName: 'Endpoint Name or ID',
+		displayName: 'Transaction Name or ID',
 		name: 'transactionId',
-		type: 'options',
-		typeOptions: {
-			loadOptionsMethod: 'loadTransactionExecutionOptions',
-		},
+		type: 'string',
 		required: true,
 		displayOptions: {
 			show: {
 				resource: ['transaction'],
-				operation: ['execute'],
-			},
-		},
-		default: '',
-		description: 'Choose from the list, or specify a Transaction ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
-	},
-	{
-		displayName: 'Endpoint Name or ID',
-		name: 'transactionId',
-		type: 'options',
-		typeOptions: {
-			loadOptionsMethod: 'loadTransactionReadOptions',
-		},
-		required: true,
-		displayOptions: {
-			show: {
-				resource: ['transaction'],
-				operation: ['read'],
+				operation: ['get'],
 			},
 		},
 		default: '',
 		description:
-			'Choose from the list, or specify a Transaction ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			'Enter the Transaction ID you want to get',
 	},
 	{
-		displayName: 'Parameters',
-		name: 'params',
-		type: 'json',
-		required: true,
-		displayOptions: {
-			show: {
-				resource: ['transaction'],
-			},
-		},
-		default: '{}',
-		description:
-			'The parameters to pass to the transaction function. Enter a JSON object (e.g., {"to": "0x3e6a2f0CBA03d293B54c9fCF354948903007a798", "amount": "10000"}).',
-	},
-	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
-		type: 'collection',
-		placeholder: 'Add Field',
-		default: {},
-		displayOptions: {
-			show: {
-				resource: ['transaction'],
-				operation: ['execute'],
-			},
-		},
+		displayName: 'Chain Name or ID',
+		name: 'chainId',
+		type: 'options',
 		options: [
 			{
-				displayName: 'Escrow Wallet ID',
-				name: 'escrowWalletId',
-				type: 'string',
-				default: '',
-				description: 'The ID of the escrow wallet to use for this transaction',
+				name: 'Ethereum',
+				value: '1',
 			},
 			{
-				displayName: 'Memo',
-				name: 'memo',
-				type: 'string',
-				default: '',
-				description: 'Optional text to include with the transaction execution',
+				name: 'Sepolia',
+				value: '11155111',
 			},
 			{
-				displayName: 'Authorization List',
-				name: 'authorizationList',
-				type: 'json',
-				default: '[]',
-				description: 'List of ERC-7702 authorizations for the transaction',
+				name: 'Base',
+				value: '8453',
+			},
+			{
+				name: 'Base Sepolia',
+				value: '84531',
+			},
+			{
+				name: 'Avalanche',
+				value: '43114',
+			},
+			{
+				name: 'Avalanche Fuji',
+				value: '43113',
 			},
 		],
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['escrowWallet'],
+				operation: ['list'],
+			},
+		},
+		default: '1',
+		description:
+			'Choose from the list, or specify a Chain ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 ];
 
