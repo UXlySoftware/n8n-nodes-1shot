@@ -1,4 +1,5 @@
 import { INodeProperties } from 'n8n-workflow';
+import { createChain } from './CommonDescriptions';
 
 export const walletOperations: INodeProperties[] = [
 	{
@@ -13,10 +14,34 @@ export const walletOperations: INodeProperties[] = [
 		},
 		options: [
 			{
+				name: 'Create Wallet',
+				value: 'create',
+				description: 'Creates a new Wallet. It will be empty until you add funds to it.',
+				action: 'Create wallet',
+			},
+			{
+				name: 'Delete Wallet',
+				value: 'delete',
+				description: 'Deletes a Wallet',
+				action: 'Delete wallet',
+			},
+			{
+				name: 'Get Wallet',
+				value: 'get',
+				description: 'Get a specific Wallet',
+				action: 'Get wallet',
+			},
+			{
 				name: 'List Wallets',
 				value: 'list',
 				description: 'List Wallets for a given chain',
 				action: 'List wallets',
+			},
+			{
+				name: 'Update Wallet',
+				value: 'update',
+				description: 'Update a Wallet',
+				action: 'Update wallet',
 			},
 		],
 		default: 'list',
@@ -24,46 +49,39 @@ export const walletOperations: INodeProperties[] = [
 ];
 
 const walletFields: INodeProperties[] = [
+	createChain(false, 'wallets', ['list', 'update']),
+	createChain(true, 'wallets', ['create',]),
 	{
-		displayName: 'Chain Name or ID',
-		name: 'chainId',
-		type: 'options',
-		options: [
-			{
-				name: 'Ethereum',
-				value: '1',
-			},
-			{
-				name: 'Sepolia',
-				value: '11155111',
-			},
-			{
-				name: 'Base',
-				value: '8453',
-			},
-			{
-				name: 'Base Sepolia',
-				value: '84531',
-			},
-			{
-				name: 'Avalanche',
-				value: '43114',
-			},
-			{
-				name: 'Avalanche Fuji',
-				value: '43113',
-			},
-		],
+		displayName: 'Wallet Name or ID',
+		name: 'walletId',
+		type: 'string',
 		required: true,
 		displayOptions: {
 			show: {
-				resource: ['wallet'],
-				operation: ['list'],
+				resource: ['wallets'],
+				operation: ['get',],
 			},
 		},
-		default: '1',
+		default: '',
 		description:
-			'Choose from the list, or specify a Chain ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			'Enter the ID of the Wallet you want to get, update, or delete or use an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	},
+	{
+		displayName: 'Wallet Name or ID',
+		name: 'walletId',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'loadWalletOptions',
+		},
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['wallets'],
+				operation: ['update','delete'],
+			},
+		},
+		default: '',
+		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
 ];
 

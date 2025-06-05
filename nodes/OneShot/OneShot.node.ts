@@ -12,6 +12,7 @@ import { promptOperationsFields } from './descriptions/PromptDescription';
 import { structOperationsFields } from './descriptions/StructDescription';
 import { transactionOperationsFields } from './descriptions/TransactionDescription';
 import { loadTransactionExecutionOptions, loadTransactionReadOptions } from './executions/options';
+import { loadWalletOptions } from './executions/Wallets';
 
 export class OneShot implements INodeType {
 	description: INodeTypeDescription = {
@@ -95,6 +96,7 @@ export class OneShot implements INodeType {
 		loadOptions: {
 			loadTransactionExecutionOptions,
 			loadTransactionReadOptions,
+			loadWalletOptions,
 		},
 	};
 
