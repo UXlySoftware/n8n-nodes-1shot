@@ -1,11 +1,11 @@
 import type { ICredentialType, INodeProperties } from 'n8n-workflow';
 
-export class oneShotApi implements ICredentialType {
+export class oneShotOAuth2Api implements ICredentialType {
 	name = 'oneShotOAuth2Api';
 
 	extends = ['oAuth2Api'];
 
-	displayName = '1Shot API';
+	displayName = '1Shot OAuth2 API';
 
 	documentationUrl = 'https://docs.1shotapi.com';
 

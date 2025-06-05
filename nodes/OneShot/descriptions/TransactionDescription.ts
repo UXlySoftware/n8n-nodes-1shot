@@ -57,8 +57,7 @@ const transactionFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description:
-			'Choose from the list, or specify a Transaction ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description: 'Choose from the list, or specify a Transaction ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Endpoint Name or ID',

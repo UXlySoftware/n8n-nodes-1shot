@@ -67,7 +67,7 @@ export class OneShot implements INodeType {
 						value: 'escrowWallet',
 					},
 					{
-						name: '1Shot Prompts',
+						name: '1Shot Prompt',
 						value: 'prompt',
 					},
 				],
