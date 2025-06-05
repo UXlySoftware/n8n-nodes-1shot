@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-1shot",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "1Shot API node for n8n",
   "keywords": [
     "n8n-community-node-package",
