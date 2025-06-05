@@ -105,8 +105,14 @@ export class OneShot implements INodeType {
 					// Parse the params JSON string into an object
 					const parsedParams = JSON.parse(paramsString);
 
-					const escrowWalletId = this.getNodeParameter('escrowWalletId', i) as string;
-					const memo = this.getNodeParameter('memo', i) as string;
+					
+					const additionalFields = this.getNodeParameter('additionalFields', i) as {
+						memo?: string;
+						escrowWalletId?: string;
+						authorizationList?: string;
+					};
+					const memo = additionalFields.memo;
+					const escrowWalletId = additionalFields.escrowWalletId;
 					// const authorizationList = this.getNodeParameter('authorizationList', i) as string;
 					// const parsedAuthorizationList = authorizationList != "" ? JSON.parse(authorizationList) : undefined;
 
