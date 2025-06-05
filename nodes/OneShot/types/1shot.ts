@@ -165,3 +165,28 @@ export interface ERC7702Authorization {
     chainId: EChain;
     signature: string;
 }
+
+export interface SolidityStructParamUpdate {
+	name?: string;
+	description?: string;
+	type?: ESolidityAbiParameterType;
+	index?: number;
+	staticValue?: string;
+	typeSize?: number;
+	typeSize2?: number;
+	isArray?: boolean;
+	arraySize?: number;
+	typeStructId?: string;
+	typeStruct?: NewSolidityStruct;
+}
+
+export interface NewSolidityStructParam extends SolidityStructParamUpdate {
+	name: string;
+	type: ESolidityAbiParameterType;
+	index: number;
+}
+
+export interface NewSolidityStruct {
+	name?: string;
+	params: NewSolidityStructParam[];
+}
