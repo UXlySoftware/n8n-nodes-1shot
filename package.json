@@ -41,10 +41,12 @@
       "dist/credentials/oneShotOAuth2Api.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/OneShot/OneShot.node.js"
+      "dist/nodes/OneShot/OneShot.node.js",
+      "dist/nodes/OneShot/OneShotWebhook.node.js"
     ]
   },
   "devDependencies": {
+    "@types/node": "^22.15.30",
     "@typescript-eslint/parser": "~8.32.0",
     "eslint": "^8.57.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.3",

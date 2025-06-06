@@ -1,4 +1,4 @@
-import { IExecuteFunctions, ILoadOptionsFunctions, INodePropertyOptions, NodeOperationError } from "n8n-workflow";
+import { IExecuteFunctions, ILoadOptionsFunctions, NodeOperationError } from "n8n-workflow";
 import { EChain, PagedResponse, ContractMethod, ContractMethodTestResult, ContractMethodEstimate, Transaction, JSONValue, ERC7702Authorization } from '../types/1shot';
 
 export async function listContractMethods(
