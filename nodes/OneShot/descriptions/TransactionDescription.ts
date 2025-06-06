@@ -56,30 +56,34 @@ const transactionFields: INodeProperties[] = [
 				operation: ['list'],
 			},
 		},
+		// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 		options: [
 			{
-				name: 'Completed',
-				value: 'Completed',
-			},
-			{
-				name: 'Failed',
-				value: 'Failed',
+				name: 'None',
+				value: 'none',
 			},
 			{
 				name: 'Pending',
 				value: 'Pending',
 			},
 			{
+				name: 'Submitted',
+				value: 'Submitted',
+			},
+			{
+				name: 'Completed',
+				value: 'Completed',
+			},
+			{
 				name: 'Retrying',
 				value: 'Retrying',
 			},	
 			{
-				name: 'Submitted',
-				value: 'Submitted',
+				name: 'Failed',
+				value: 'Failed',
 			},
-			
 		],
-		default: 'Completed',
+		default: 'none',
 		description: 'Filter transactions by status',
 	},
 	{

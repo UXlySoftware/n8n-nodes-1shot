@@ -177,33 +177,6 @@ const contractMethodFields: INodeProperties[] = [
 		description: 'Filter contract methods by name',
 	},
 	{
-		displayName: 'Status',
-		name: 'status',
-		type: 'options',
-		displayOptions: {
-			show: {
-				resource: ['contractMethods'],
-				operation: ['list'],
-			},
-		},
-		options: [
-			{
-				name: 'Live',
-				value: 'live',
-			},
-			{
-				name: 'Archived',
-				value: 'archived',
-			},
-			{
-				name: 'Both',
-				value: 'both',
-			},
-		],
-		default: 'live',
-		description: 'Filter contract methods by status',
-	},
-	{
 		displayName: 'Contract Address',
 		name: 'contractAddress',
 		type: 'string',
@@ -241,6 +214,10 @@ const contractMethodFields: INodeProperties[] = [
 		},
 		options: [
 			{
+				name: 'None',
+				value: 'none',
+			},
+			{
 				name: 'Read',
 				value: 'read',
 			},
@@ -249,7 +226,7 @@ const contractMethodFields: INodeProperties[] = [
 				value: 'write',
 			},
 		],
-		default: 'write',
+		default: 'none',
 		description: 'Filter contract methods by type',
 	},
 	{

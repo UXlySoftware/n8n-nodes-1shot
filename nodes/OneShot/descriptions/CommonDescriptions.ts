@@ -88,11 +88,12 @@ export const chainOptions = [
 ];
 
 export function createChain(required: boolean, resource: string, operations: string[]): INodeProperties {
+    // eslint-disable-next-line n8n-nodes-base/node-param-default-missing
     return {
 		displayName: 'Chain Name or ID',
 		name: 'chainId',
 		type: 'options',
-		options: chainOptions,
+		options: required ? chainOptions : [{ name: 'None', value: 'none' }, ...chainOptions],
 		required: required,
 		displayOptions: {
 			show: {
@@ -100,7 +101,7 @@ export function createChain(required: boolean, resource: string, operations: str
 				operation: operations,
 			},
 		},
-		default: '1',
+		default: required ? '1' : 'none',
 		description:
 			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	};

@@ -52,6 +52,19 @@ const walletFields: INodeProperties[] = [
 	createChain(false, 'wallets', ['list', 'update']),
 	createChain(true, 'wallets', ['create',]),
 	{
+		displayName: 'Name',
+		name: 'name',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['wallets'],
+				operation: ['list'],
+			},
+		},
+		default: '',
+		description: 'Filter wallets by name',
+	},
+	{
 		displayName: 'Wallet Name or ID',
 		name: 'walletId',
 		type: 'string',
