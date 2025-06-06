@@ -10,6 +10,7 @@ export async function listContractMethods(
     status?: 'live' | 'archived' | 'both',
     contractAddress?: string,
     promptId?: string,
+	methodType?: 'read' | 'write',
 ): Promise<PagedResponse<ContractMethod>> {
 	try {
 		const credentials = await context.getCredentials('oneShotOAuth2Api');
@@ -36,6 +37,7 @@ export async function listContractMethods(
 					status,
 					contractAddress,
 					promptId,
+					methodType,
 				},
 				headers: {
 					Accept: 'application/json',

@@ -1,4 +1,5 @@
 import { INodeProperties } from 'n8n-workflow';
+import { createChain } from './CommonDescriptions';
 
 export const transactionOperations: INodeProperties[] = [
 	{
@@ -8,7 +9,7 @@ export const transactionOperations: INodeProperties[] = [
 		noDataExpression: true,
 		displayOptions: {
 			show: {
-				resource: ['transaction'],
+				resource: ['transactions'],
 			},
 		},
 		options: [
@@ -37,7 +38,7 @@ const transactionFields: INodeProperties[] = [
 		required: true,
 		displayOptions: {
 			show: {
-				resource: ['transaction'],
+				resource: ['transactions'],
 				operation: ['get'],
 			},
 		},
@@ -46,46 +47,94 @@ const transactionFields: INodeProperties[] = [
 			'Enter the Transaction ID you want to get',
 	},
 	{
-		displayName: 'Chain Name or ID',
-		name: 'chainId',
+		displayName: 'Status',
+		name: 'status',
 		type: 'options',
-		options: [
-			{
-				name: 'Ethereum',
-				value: '1',
-			},
-			{
-				name: 'Sepolia',
-				value: '11155111',
-			},
-			{
-				name: 'Base',
-				value: '8453',
-			},
-			{
-				name: 'Base Sepolia',
-				value: '84531',
-			},
-			{
-				name: 'Avalanche',
-				value: '43114',
-			},
-			{
-				name: 'Avalanche Fuji',
-				value: '43113',
-			},
-		],
-		required: true,
 		displayOptions: {
 			show: {
-				resource: ['escrowWallet'],
+				resource: ['transactions'],
 				operation: ['list'],
 			},
 		},
-		default: '1',
-		description:
-			'Choose from the list, or specify a Chain ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		options: [
+			{
+				name: 'Completed',
+				value: 'Completed',
+			},
+			{
+				name: 'Failed',
+				value: 'Failed',
+			},
+			{
+				name: 'Pending',
+				value: 'Pending',
+			},
+			{
+				name: 'Retrying',
+				value: 'Retrying',
+			},	
+			{
+				name: 'Submitted',
+				value: 'Submitted',
+			},
+			
+		],
+		default: 'Completed',
+		description: 'Filter transactions by status',
 	},
+	{
+		displayName: 'Wallet ID',
+		name: 'walletId',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['transactions'],
+				operation: ['list'],
+			},
+		},
+		default: '',
+		description: 'Filter transactions by wallet ID',
+	},
+	{
+		displayName: 'Contract Method ID',
+		name: 'contractMethodId',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['transactions'],
+				operation: ['list'],
+			},
+		},
+		default: '',
+		description: 'Filter transactions by contract method ID',
+	},
+	{
+		displayName: 'API Credential ID',
+		name: 'apiCredentialId',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['transactions'],
+				operation: ['list'],
+			},
+		},
+		default: '',
+		description: 'Filter transactions by API credential ID',
+	},
+	{
+		displayName: 'User ID',
+		name: 'userId',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['transactions'],
+				operation: ['list'],
+			},
+		},
+		default: '',
+		description: 'Filter transactions by user ID',
+	},
+	createChain(false, "transactions", ["list"]),
 ];
 
 export const transactionOperationsFields: INodeProperties[] = [

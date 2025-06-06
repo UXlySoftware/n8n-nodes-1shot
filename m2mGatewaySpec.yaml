@@ -349,6 +349,15 @@ paths:
             type: string
             format: uuid
             example: 8a6e0804-2bd0-4672-b79d-d97027f90720
+        - name: methodType
+          in: query
+          required: false
+          description: Which type of Contract Method you want to filter by- read or write methods. If not provided, all Contract Methods will be returned.
+          schema:
+            type: string
+            enum:
+              - read
+              - write
       security:
         - OAuth2ClientCredentials:
           - read:api
@@ -621,13 +630,14 @@ paths:
           in: query
           required: false
           schema:
-            type: integer
-            description: 0 is Submitted, 1 is Completed, 2 is Retrying, 3 is Failed
+            type: string
+            description: The status of the Transaction as it moves through 1Shot.
             enum:
-              - 0
-              - 1
-              - 2
-              - 3
+              - Pending
+              - Submitted
+              - Completed
+              - Retrying
+              - Failed
         - name: walletId
           in: query
           required: false

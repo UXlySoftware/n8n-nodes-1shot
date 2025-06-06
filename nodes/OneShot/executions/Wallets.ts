@@ -4,7 +4,7 @@ import { EChain, PagedResponse, Wallet } from '../types/1shot';
 export async function loadWalletOptions(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-	const response = await listWallets(this, undefined, 1, 100, undefined);
+	const response = await listWallets(this, undefined, 1, 1000, undefined);
 
     const options: INodePropertyOptions[] = [];
     for (const wallet of response.response) {

@@ -9,7 +9,7 @@ export const walletOperations: INodeProperties[] = [
 		noDataExpression: true,
 		displayOptions: {
 			show: {
-				resource: ['wallet'],
+				resource: ['wallets'],
 			},
 		},
 		options: [

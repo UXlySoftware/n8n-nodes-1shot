@@ -13,10 +13,34 @@ export const contractMethodOperations: INodeProperties[] = [
 		},
 		options: [
 			{
+				name: 'Assure Contract Methods From Prompt',
+				value: 'assureContractMethodsFromPrompt',
+				description: 'Make sure you have a set of Contract Methods ready to use based on your chosen Prompt',
+				action: 'Assure contract methods from prompt',
+			},
+			{
+				name: 'Estimate',
+				value: 'estimate',
+				description: 'Get an estimate of the gas cost of a contract method',
+				action: 'Estimate the gas cost of a contract method',
+			},
+			{
 				name: 'Execute',
 				value: 'execute',
 				description: 'Execute a contract method on the blockchain',
 				action: 'Execute a contract method',
+			},
+			{
+				name: 'Get',
+				value: 'get',
+				description: 'Get a single contract method',
+				action: 'Get contract method',
+			},
+			{
+				name: 'List',
+				value: 'list',
+				description: 'List all contract methods',
+				action: 'List all contract methods',
 			},
 			{
 				name: 'Read',
@@ -25,10 +49,10 @@ export const contractMethodOperations: INodeProperties[] = [
 				action: 'Read data from a function',
 			},
 			{
-				name: 'Assure Contract Methods From Prompt',
-				value: 'assureContractMethodsFromPrompt',
-				description: 'Make sure you have a set of Contract Methods ready to use based on your chosen Prompt',
-				action: 'Assure contract methods from prompt',
+				name: 'Simulate',
+				value: 'simulate',
+				description: 'Simulate a contract method call and see if it would succeed with the current state of the chain',
+				action: 'Simulate a contract method call',
 			},
 		],
 		default: 'execute',
@@ -47,7 +71,7 @@ const contractMethodFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['contractMethods'],
-				operation: ['execute'],
+				operation: ['execute', "estimate", "simulate"],
 			},
 		},
 		default: '',
@@ -72,6 +96,23 @@ const contractMethodFields: INodeProperties[] = [
 			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
 	{
+		displayName: 'Contract Method Name or ID',
+		name: 'contractMethodId',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'loadContractMethodAllOptions',
+		},
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['get'],
+			},
+		},
+		default: '',
+		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	},
+	{
 		displayName: 'Parameters',
 		name: 'params',
 		type: 'json',
@@ -79,6 +120,7 @@ const contractMethodFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['contractMethods'],
+				operation: ['execute', "estimate", "simulate", "read"],
 			},
 		},
 		default: '{}',
@@ -120,6 +162,108 @@ const contractMethodFields: INodeProperties[] = [
 				description: 'List of ERC-7702 authorizations for the Contract Method',
 			},
 		],
+	},
+	{
+		displayName: 'Name',
+		name: 'name',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['list'],
+			},
+		},
+		default: '',
+		description: 'Filter contract methods by name',
+	},
+	{
+		displayName: 'Status',
+		name: 'status',
+		type: 'options',
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['list'],
+			},
+		},
+		options: [
+			{
+				name: 'Live',
+				value: 'live',
+			},
+			{
+				name: 'Archived',
+				value: 'archived',
+			},
+			{
+				name: 'Both',
+				value: 'both',
+			},
+		],
+		default: 'live',
+		description: 'Filter contract methods by status',
+	},
+	{
+		displayName: 'Contract Address',
+		name: 'contractAddress',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['list'],
+			},
+		},
+		default: '',
+		description: 'Filter contract methods by contract address',
+	},
+	{
+		displayName: 'Prompt ID',
+		name: 'promptId',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['list'],
+			},
+		},
+		default: '',
+		description: 'Filter contract methods by prompt ID',
+	},
+	{
+		displayName: 'Method Type',
+		name: 'methodType',
+		type: 'options',
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['list'],
+			},
+		},
+		options: [
+			{
+				name: 'Read',
+				value: 'read',
+			},
+			{
+				name: 'Write',
+				value: 'write',
+			},
+		],
+		default: 'write',
+		description: 'Filter contract methods by type',
+	},
+	{
+		displayName: 'Contract Method ID',
+		name: 'contractMethodId',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['get'],
+			},
+		},
+		default: '',
+		description: 'Enter the ID of the Contract Method you want to get',
 	},
 ];
 

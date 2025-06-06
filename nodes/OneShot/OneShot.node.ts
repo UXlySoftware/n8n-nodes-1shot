@@ -9,9 +9,8 @@ import {
 import { contractMethodOperationsFields } from './descriptions/ContractMethodDescription';
 import { walletOperationsFields } from './descriptions/WalletDescription';
 import { promptOperationsFields } from './descriptions/PromptDescription';
-import { structOperationsFields } from './descriptions/StructDescription';
 import { transactionOperationsFields } from './descriptions/TransactionDescription';
-import { loadTransactionExecutionOptions, loadTransactionReadOptions } from './executions/options';
+import { loadContractMethodAllOptions, loadContractMethodExecutionOptions, loadContractMethodReadOptions } from './executions/options';
 import { loadWalletOptions } from './executions/Wallets';
 
 export class OneShot implements INodeType {
@@ -69,10 +68,10 @@ export class OneShot implements INodeType {
 						name: 'Prompt',
 						value: 'prompts',
 					},
-					{
-						name: 'Struct',
-						value: 'structs',
-					},
+					// {
+					// 	name: 'Struct',
+					// 	value: 'structs',
+					// },
 					{
 						name: 'Transaction',
 						value: 'transactions',
@@ -87,15 +86,16 @@ export class OneShot implements INodeType {
 			...contractMethodOperationsFields,
 			...walletOperationsFields,
 			...promptOperationsFields,
-			...structOperationsFields,
+			// ...structOperationsFields,
 			...transactionOperationsFields,
 		],
 	};
 
 	methods = {
 		loadOptions: {
-			loadTransactionExecutionOptions,
-			loadTransactionReadOptions,
+			loadContractMethodExecutionOptions,
+			loadContractMethodReadOptions,
+			loadContractMethodAllOptions,
 			loadWalletOptions,
 		},
 	};
