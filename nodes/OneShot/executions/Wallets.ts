@@ -1,5 +1,63 @@
 import { IExecuteFunctions, ILoadOptionsFunctions, INodePropertyOptions, NodeOperationError } from 'n8n-workflow';
 import { EChain, PagedResponse, Wallet } from '../types/1shot';
+import { additionalCredentialOptions, oneshotApiBaseUrl } from '../types/constants';
+
+export async function listWalletsOperation(context: IExecuteFunctions, index: number) {
+	const chainId = context.getNodeParameter('chainId', index) as EChain;
+	const page = context.getNodeParameter('page', index) as number;
+	const pageSize = context.getNodeParameter('pageSize', index) as number;
+	const name = context.getNodeParameter('name', index) as string;
+
+	return await listWallets(
+		context,
+		chainId || undefined,
+		page || undefined,
+		pageSize || undefined,
+		name || undefined,
+	);
+}
+
+export async function createWalletOperation(context: IExecuteFunctions, index: number) {
+	const chainId = context.getNodeParameter('chainId', index) as EChain;
+	const name = context.getNodeParameter('name', index) as string;
+	const description = context.getNodeParameter('description', index) as string;
+
+	return await createWallet(
+		context,
+		chainId,
+		name,
+		description || undefined,
+	);
+}
+
+export async function getWalletOperation(context: IExecuteFunctions, index: number) {
+	const walletId = context.getNodeParameter('walletId', index) as string;
+	const includeBalances = context.getNodeParameter('includeBalances', index) as boolean;
+
+	return await getWallet(
+		context,
+		walletId,
+		includeBalances || undefined,
+	);
+}
+
+export async function updateWalletOperation(context: IExecuteFunctions, index: number) {
+	const walletId = context.getNodeParameter('walletId', index) as string;
+	const name = context.getNodeParameter('name', index) as string;
+	const description = context.getNodeParameter('description', index) as string;
+
+	return await updateWallet(
+		context,
+		walletId,
+		name || undefined,
+		description || undefined,
+	);
+}
+
+export async function deleteWalletOperation(context: IExecuteFunctions, index: number) {
+	const walletId = context.getNodeParameter('walletId', index) as string;
+	return await deleteWallet(context, walletId);
+}
 
 export async function loadWalletOptions(
 	this: ILoadOptionsFunctions,
@@ -55,8 +113,9 @@ export async function listWallets(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
         return response;
@@ -101,8 +160,9 @@ export async function createWallet(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -132,8 +192,9 @@ export async function getWallet(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -165,8 +226,9 @@ export async function updateWallet(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -192,8 +254,9 @@ export async function deleteWallet(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;

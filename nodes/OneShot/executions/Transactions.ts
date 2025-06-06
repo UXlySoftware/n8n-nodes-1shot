@@ -1,5 +1,34 @@
 import { IExecuteFunctions, ILoadOptionsFunctions, NodeOperationError } from 'n8n-workflow';
 import { EChain, ETransactionStatus, PagedResponse, Transaction } from '../types/1shot';
+import { additionalCredentialOptions, oneshotApiBaseUrl } from '../types/constants';
+
+export async function listTransactionsOperation(context: IExecuteFunctions, index: number) {
+	const chainId = context.getNodeParameter('chainId', index) as EChain;
+	const page = context.getNodeParameter('page', index) as number;
+	const pageSize = context.getNodeParameter('pageSize', index) as number;
+	const status = context.getNodeParameter('status', index) as ETransactionStatus;
+	const walletId = context.getNodeParameter('walletId', index) as string;
+	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
+	const apiCredentialId = context.getNodeParameter('apiCredentialId', index) as string;
+	const userId = context.getNodeParameter('userId', index) as string;
+
+	return await listTransactions(
+		context,
+		chainId || undefined,
+		page || undefined,
+		pageSize || undefined,
+		status || undefined,
+		walletId || undefined,
+		contractMethodId || undefined,
+		apiCredentialId || undefined,
+		userId || undefined,
+	);
+}
+
+export async function getTransactionOperation(context: IExecuteFunctions, index: number) {
+	const transactionId = context.getNodeParameter('transactionId', index) as string;
+	return await getTransaction(context, transactionId);
+}
 
 export async function listTransactions(
 	context: IExecuteFunctions | ILoadOptionsFunctions,
@@ -44,8 +73,9 @@ export async function listTransactions(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -71,8 +101,9 @@ export async function getTransaction(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;

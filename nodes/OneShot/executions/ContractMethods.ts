@@ -1,5 +1,92 @@
 import { IExecuteFunctions, ILoadOptionsFunctions, NodeOperationError } from "n8n-workflow";
 import { EChain, PagedResponse, ContractMethod, ContractMethodTestResult, ContractMethodEstimate, Transaction, JSONValue, ERC7702Authorization } from '../types/1shot';
+import { additionalCredentialOptions, oneshotApiBaseUrl } from "../types/constants";
+
+export async function listContractMethodsOperation(context: IExecuteFunctions, index: number) {
+	const chainId = context.getNodeParameter('chainId', index) as EChain;
+	const page = context.getNodeParameter('page', index) as number;
+	const pageSize = context.getNodeParameter('pageSize', index) as number;
+	const name = context.getNodeParameter('name', index) as string;
+	const status = context.getNodeParameter('status', index) as 'live' | 'archived' | 'both';
+	const contractAddress = context.getNodeParameter('contractAddress', index) as string;
+	const promptId = context.getNodeParameter('promptId', index) as string;
+	const methodType = context.getNodeParameter('methodType', index) as 'read' | 'write';
+
+	return await listContractMethods(
+		context,
+		chainId || undefined,
+		page || undefined,
+		pageSize || undefined,
+		name || undefined,
+		status || undefined,
+		contractAddress || undefined,
+		promptId || undefined,
+		methodType || undefined,
+	);
+}
+
+export async function getContractMethodOperation(context: IExecuteFunctions, index: number) {
+	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
+	return await getContractMethod(context, contractMethodId);
+}
+
+export async function estimateContractMethodOperation(context: IExecuteFunctions, index: number) {
+	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
+	const paramsString = context.getNodeParameter('params', index) as string;
+	const parsedParams = JSON.parse(paramsString);
+	const walletId = context.getNodeParameter('walletId', index) as string;
+
+	return await estimateContractMethod(context, contractMethodId, parsedParams, walletId);
+}
+
+export async function simulateContractMethodOperation(context: IExecuteFunctions, index: number) {
+	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
+	const paramsString = context.getNodeParameter('params', index) as string;
+	const parsedParams = JSON.parse(paramsString);
+
+	return await testContractMethod(context, contractMethodId, parsedParams);
+}
+
+export async function assureContractMethodsFromPromptOperation(context: IExecuteFunctions, index: number) {
+	const chainId = context.getNodeParameter('chainId', index) as EChain;
+	const contractAddress = context.getNodeParameter('contractAddress', index) as string;
+	const walletId = context.getNodeParameter('walletId', index) as string;
+	const promptId = context.getNodeParameter('promptId', index) as string;
+
+	return await assureContractMethodsFromPrompt(
+		context,
+		chainId,
+		contractAddress,
+		walletId,
+		promptId || undefined,
+	);
+}
+
+export async function executeContractMethodOperation(context: IExecuteFunctions, index: number) {
+	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
+	const paramsString = context.getNodeParameter('params', index) as string;
+	const parsedParams = JSON.parse(paramsString);
+
+	const additionalFields = context.getNodeParameter('additionalFields', index) as {
+		memo?: string;
+		walletId?: string;
+		authorizationList?: string;
+	};
+	const memo = additionalFields.memo;
+	const walletId = additionalFields.walletId;
+	// const authorizationList = this.getNodeParameter('authorizationList', i) as string;
+	// const parsedAuthorizationList = authorizationList != "" ? JSON.parse(authorizationList) : undefined;
+
+	return await executeContractMethod(context, contractMethodId, parsedParams, walletId, memo);
+}
+
+export async function readContractMethodOperation(context: IExecuteFunctions, index: number) {
+	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
+	const paramsString = context.getNodeParameter('params', index) as string;
+	const parsedParams = JSON.parse(paramsString);
+
+	return await readContractMethod(context, contractMethodId, parsedParams);
+}
 
 export async function listContractMethods(
 	context: ILoadOptionsFunctions | IExecuteFunctions,
@@ -44,8 +131,9 @@ export async function listContractMethods(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -103,8 +191,9 @@ export async function createContractMethod(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -155,8 +244,9 @@ export async function createContractMethodsFromAbi(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -201,8 +291,9 @@ export async function assureContractMethodsFromPrompt(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -228,8 +319,9 @@ export async function getContractMethod(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -275,8 +367,9 @@ export async function updateContractMethod(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -302,8 +395,9 @@ export async function deleteContractMethod(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 	} catch (error) {
 		context.logger.error(`Error deleting Contract Method ${error.message}`, { error });
@@ -329,8 +423,9 @@ export async function testContractMethod(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -362,8 +457,9 @@ export async function estimateContractMethod(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -377,7 +473,7 @@ export async function executeContractMethod(
 	context: IExecuteFunctions,
 	contractMethodId: string,
 	params: JSONValue,
-	walletId: string,
+	walletId?: string,
 	memo?: string,
 	authorizationList?: ERC7702Authorization[],
 ): Promise<Transaction> {
@@ -399,8 +495,9 @@ export async function executeContractMethod(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -428,8 +525,9 @@ export async function readContractMethod(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;

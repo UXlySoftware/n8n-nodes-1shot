@@ -1,5 +1,6 @@
 import { IExecuteFunctions, ILoadOptionsFunctions } from 'n8n-workflow';
 import { NewSolidityStructParam, SolidityStruct, SolidityStructParamUpdate } from '../types/1shot';
+import { additionalCredentialOptions, oneshotApiBaseUrl } from '../types/constants';
 
 export async function updateStruct(
 	context: IExecuteFunctions | ILoadOptionsFunctions,
@@ -21,8 +22,9 @@ export async function updateStruct(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -50,8 +52,9 @@ export async function addStructParam(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -81,8 +84,9 @@ export async function updateStructParams(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;
@@ -109,8 +113,9 @@ export async function deleteStructParam(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;

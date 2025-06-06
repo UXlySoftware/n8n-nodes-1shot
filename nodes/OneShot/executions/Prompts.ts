@@ -1,5 +1,17 @@
 import { IExecuteFunctions, ILoadOptionsFunctions } from 'n8n-workflow';
 import { EChain, FullPrompt } from '../types/1shot';
+import { additionalCredentialOptions, oneshotApiBaseUrl } from '../types/constants';
+
+export async function searchPromptsOperation(context: IExecuteFunctions, index: number) {
+	const query = context.getNodeParameter('query', index) as string;
+	const chainId = context.getNodeParameter('chainId', index) as EChain;
+
+	return await searchPrompts(
+		context,
+		query,
+		chainId || undefined,
+	);
+}
 
 export async function searchPrompts(
 	context: IExecuteFunctions | ILoadOptionsFunctions,
@@ -22,8 +34,9 @@ export async function searchPrompts(
 					'Content-Type': 'application/json',
 				},
 				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
+				baseURL: oneshotApiBaseUrl,
 			},
+			additionalCredentialOptions,
 		);
 
 		return response;

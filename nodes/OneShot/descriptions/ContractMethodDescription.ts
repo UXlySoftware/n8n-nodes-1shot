@@ -141,8 +141,8 @@ const contractMethodFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				displayName: 'Escrow Wallet ID',
-				name: 'escrowWalletId',
+				displayName: 'Wallet ID',
+				name: 'walletId',
 				type: 'string',
 				default: '',
 				description: 'The ID of the Wallet to use for this Contract Method',
