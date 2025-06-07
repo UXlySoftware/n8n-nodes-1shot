@@ -125,23 +125,24 @@ export class OneShot implements INodeType {
 					returnData.push(response);
 				} else if (operation === 'read') {
 					const response = await readContractMethodOperation(this, i);
-					returnData.push(response);
+					console.log("CHARLIE", {"response": response});
+					returnData.push({"response": response});
 				} else if (operation === 'list') {
 					const response = await listContractMethodsOperation(this, i);
-					returnData.push(response);
+					returnData.push(...response.response);
 				} else if (operation === 'get') {
 					const response = await getContractMethodOperation(this, i);
 					returnData.push(response);
 				} else if (operation === 'assureContractMethodsFromPrompt') {
 					const response = await assureContractMethodsFromPromptOperation(this, i);
-					returnData.push(response);
+					returnData.push(...response);
 				} else {
 					throw new NodeOperationError(this.getNode(), `Unsupported operation for resource contractMethods: ${operation}`);
 				}
 			} else if (resource === 'wallets') {
 				if (operation === 'list') {
 					const response = await listWalletsOperation(this, i);
-					returnData.push(response);
+					returnData.push(...response.response);
 				} else if (operation === 'create') {
 					const response = await createWalletOperation(this, i);
 					returnData.push(response);
@@ -160,14 +161,14 @@ export class OneShot implements INodeType {
 			} else if (resource === 'prompts') {
 				if (operation === 'search') {
 					const response = await searchPromptsOperation(this, i);
-					returnData.push(response);
+					returnData.push(...response);
 				} else {
 					throw new NodeOperationError(this.getNode(), `Unsupported operation for resource prompts: ${operation}`);
 				}
 			} else if (resource === 'transactions') {
 				if (operation === 'list') {
 					const response = await listTransactionsOperation(this, i);
-					returnData.push(response);
+					returnData.push(...response.response);
 				} else if (operation === 'get') {
 					const response = await getTransactionOperation(this, i);
 					returnData.push(response);

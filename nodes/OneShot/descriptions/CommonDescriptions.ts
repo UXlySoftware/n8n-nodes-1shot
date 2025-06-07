@@ -93,7 +93,7 @@ export function createChain(required: boolean, resource: string, operations: str
 		displayName: 'Chain Name or ID',
 		name: 'chainId',
 		type: 'options',
-		options: required ? chainOptions : [{ name: 'None', value: 'none' }, ...chainOptions],
+		options: required ? chainOptions : [{ name: 'None', value: '' }, ...chainOptions],
 		required: required,
 		displayOptions: {
 			show: {
@@ -101,7 +101,7 @@ export function createChain(required: boolean, resource: string, operations: str
 				operation: operations,
 			},
 		},
-		default: required ? '1' : 'none',
+		default: required ? '1' : '',
 		description:
 			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	};

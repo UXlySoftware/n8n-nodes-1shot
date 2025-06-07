@@ -10,10 +10,10 @@ services:
     command:
       - "http"
       - "http://n8n:5678"
-      - "--url=${NGROK_DOMAIN}"
+      - "--url=immune-sheep-light.ngrok-free.app"
     environment:
-      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-      NGROK_DOMAIN: ${NGROK_DOMAIN}
+      NGROK_AUTHTOKEN: 2xngo901fKO5hesJoTMDmsOpV1m_7bGkfn826ykTYp17CUqwa
+      NGROK_DOMAIN: immune-sheep-light.ngrok-free.app
     ports:
       - 4040:4040
 
@@ -28,10 +28,10 @@ services:
       - ./:/home/node/.n8n/custom/n8n-nodes-1shot
       # - ./:/home/node/.n8n/custom/node_modules/n8n-nodes-1shot
     environment:
-      - N8N_HOST=${NGROK_DOMAIN}
+      - N8N_HOST=immune-sheep-light.ngrok-free.app
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
-      - N8N_EDITOR_BASE_URL=https://${NGROK_DOMAIN}
+      - N8N_EDITOR_BASE_URL=https://immune-sheep-light.ngrok-free.app
       - N8N_COMMUNITY_PACKAGES_ENABLED=true
       # - N8N_CUSTOM_EXTENSIONS=/home/node/.n8n/custom/node_modules/n8n-nodes-1shot
       - N8N_CUSTOM_EXTENSIONS=/home/node/.n8n/custom/

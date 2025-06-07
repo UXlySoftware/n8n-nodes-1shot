@@ -128,8 +128,6 @@ paths:
               properties:
                 params:
                   $ref: '#/components/schemas/JSONValue'
-                walletId:
-                  $ref: "#/components/schemas/WalletId"
       responses:
         200:
           description: "Success"

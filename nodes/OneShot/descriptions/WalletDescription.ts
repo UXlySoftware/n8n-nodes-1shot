@@ -96,6 +96,61 @@ const walletFields: INodeProperties[] = [
 		default: '',
 		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
+	{
+		displayName: 'Name',
+		name: 'name',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['wallets'],
+				operation: ['create', 'update'],
+			},
+		},
+		default: '',
+		description: 'The name of the wallet',
+	},
+	{
+		displayName: 'Description',
+		name: 'description',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['wallets'],
+				operation: ['create', 'update'],
+			},
+		},
+		default: '',
+		description: 'A description of the wallet',
+	},
+	{
+		displayName: 'Page Number',
+		name: 'page',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['wallets'],
+				operation: ['list'],
+			},
+		},
+		default: 1,
+		description: 'Enter the page number to get. This starts at 1.',
+	},
+	{
+		displayName: 'Page Size',
+		name: 'pageSize',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['wallets'],
+				operation: ['list'],
+			},
+		},
+		default: 25,
+		description: 'Enter the size of the page to get',
+	},
 ];
 
 export const walletOperationsFields: INodeProperties[] = [

@@ -32,6 +32,7 @@ async function loadContractMethodOptions(
 		undefined, // chainId
 		undefined, // contractId
 		undefined, // contractMethodId
+		undefined, // promptId
 		methodType, // methodType
 	);
 

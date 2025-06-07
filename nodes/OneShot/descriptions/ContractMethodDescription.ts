@@ -1,4 +1,5 @@
 import { INodeProperties } from 'n8n-workflow';
+import { createChain } from './CommonDescriptions';
 
 export const contractMethodOperations: INodeProperties[] = [
 	{
@@ -94,23 +95,6 @@ const contractMethodFields: INodeProperties[] = [
 		default: '',
 		description:
 			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-	},
-	{
-		displayName: 'Contract Method Name or ID',
-		name: 'contractMethodId',
-		type: 'options',
-		typeOptions: {
-			loadOptionsMethod: 'loadContractMethodAllOptions',
-		},
-		required: true,
-		displayOptions: {
-			show: {
-				resource: ['contractMethods'],
-				operation: ['get'],
-			},
-		},
-		default: '',
-		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
 	{
 		displayName: 'Parameters',
@@ -215,7 +199,7 @@ const contractMethodFields: INodeProperties[] = [
 		options: [
 			{
 				name: 'None',
-				value: 'none',
+				value: '',
 			},
 			{
 				name: 'Read',
@@ -226,7 +210,7 @@ const contractMethodFields: INodeProperties[] = [
 				value: 'write',
 			},
 		],
-		default: 'none',
+		default: '',
 		description: 'Filter contract methods by type',
 	},
 	{
@@ -241,6 +225,81 @@ const contractMethodFields: INodeProperties[] = [
 		},
 		default: '',
 		description: 'Enter the ID of the Contract Method you want to get',
+	},
+	createChain(true, 'contractMethods', ['assureContractMethodsFromPrompt']),
+	createChain(false, 'contractMethods', ['list']),
+	{
+		displayName: 'Contract Address',
+		name: 'contractAddress',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['assureContractMethodsFromPrompt'],
+			},
+		},
+		default: '',
+		description: 'Enter the address of the contract to assure contract methods from. This is required, and can be pulled from the prompt if needed.',
+	},
+	{
+		displayName: 'Prompt ID',
+		name: 'promptId',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['assureContractMethodsFromPrompt'],
+			},
+		},
+		default: '',
+		description: 'Enter the ID of the Prompt to assure contract methods from',
+	},
+	{
+		displayName: 'Wallet Name or ID',
+		name: 'walletId',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'loadWalletOptions',
+		},
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['assureContractMethodsFromPrompt'],
+			},
+		},
+		default: '',
+		description: 'Select the Wallet to use for the contract methods. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+	},
+	{
+		displayName: 'Page Number',
+		name: 'page',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['list'],
+			},
+		},
+		default: 1,
+		description: 'Enter the page number to get. This starts at 1.',
+	},
+	{
+		displayName: 'Page Size',
+		name: 'pageSize',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['list'],
+			},
+		},
+		default: 25,
+		description: 'Enter the size of the page to get',
 	},
 ];
 

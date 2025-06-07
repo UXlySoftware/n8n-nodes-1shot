@@ -32,12 +32,11 @@ export async function createWalletOperation(context: IExecuteFunctions, index: n
 
 export async function getWalletOperation(context: IExecuteFunctions, index: number) {
 	const walletId = context.getNodeParameter('walletId', index) as string;
-	const includeBalances = context.getNodeParameter('includeBalances', index) as boolean;
-
+	
 	return await getWallet(
 		context,
 		walletId,
-		includeBalances || undefined,
+		true,
 	);
 }
 

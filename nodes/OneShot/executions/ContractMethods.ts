@@ -7,7 +7,6 @@ export async function listContractMethodsOperation(context: IExecuteFunctions, i
 	const page = context.getNodeParameter('page', index) as number;
 	const pageSize = context.getNodeParameter('pageSize', index) as number;
 	const name = context.getNodeParameter('name', index) as string;
-	const status = context.getNodeParameter('status', index) as 'live' | 'archived' | 'both';
 	const contractAddress = context.getNodeParameter('contractAddress', index) as string;
 	const promptId = context.getNodeParameter('promptId', index) as string;
 	const methodType = context.getNodeParameter('methodType', index) as 'read' | 'write';
@@ -18,7 +17,7 @@ export async function listContractMethodsOperation(context: IExecuteFunctions, i
 		page || undefined,
 		pageSize || undefined,
 		name || undefined,
-		status || undefined,
+		undefined, // status
 		contractAddress || undefined,
 		promptId || undefined,
 		methodType || undefined,
@@ -34,9 +33,8 @@ export async function estimateContractMethodOperation(context: IExecuteFunctions
 	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
 	const paramsString = context.getNodeParameter('params', index) as string;
 	const parsedParams = JSON.parse(paramsString);
-	const walletId = context.getNodeParameter('walletId', index) as string;
 
-	return await estimateContractMethod(context, contractMethodId, parsedParams, walletId);
+	return await estimateContractMethod(context, contractMethodId, parsedParams);
 }
 
 export async function simulateContractMethodOperation(context: IExecuteFunctions, index: number) {
@@ -44,7 +42,7 @@ export async function simulateContractMethodOperation(context: IExecuteFunctions
 	const paramsString = context.getNodeParameter('params', index) as string;
 	const parsedParams = JSON.parse(paramsString);
 
-	return await testContractMethod(context, contractMethodId, parsedParams);
+	return await simulateContractMethod(context, contractMethodId, parsedParams);
 }
 
 export async function assureContractMethodsFromPromptOperation(context: IExecuteFunctions, index: number) {
@@ -405,7 +403,7 @@ export async function deleteContractMethod(
 	}
 }
 
-export async function testContractMethod(
+export async function simulateContractMethod(
 	context: IExecuteFunctions,
 	contractMethodId: string,
 	params: JSONValue,
@@ -439,7 +437,6 @@ export async function estimateContractMethod(
 	context: IExecuteFunctions,
 	contractMethodId: string,
 	params: JSONValue,
-	walletId: string,
 ): Promise<ContractMethodEstimate> {
 	try {
 		const response: ContractMethodEstimate = await context.helpers.requestWithAuthentication.call(
@@ -450,7 +447,6 @@ export async function estimateContractMethod(
 				url: `/methods/${contractMethodId}/estimate`,
 				body: {
 					params,
-					walletId,
 				},
 				headers: {
 					Accept: 'application/json',

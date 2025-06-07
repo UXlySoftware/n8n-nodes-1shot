@@ -138,6 +138,34 @@ const transactionFields: INodeProperties[] = [
 		default: '',
 		description: 'Filter transactions by user ID',
 	},
+	{
+		displayName: 'Page Number',
+		name: 'page',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['transactions'],
+				operation: ['list'],
+			},
+		},
+		default: 1,
+		description: 'Enter the page number to get. This starts at 1.',
+	},
+	{
+		displayName: 'Page Size',
+		name: 'pageSize',
+		type: 'number',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['transactions'],
+				operation: ['list'],
+			},
+		},
+		default: 25,
+		description: 'Enter the size of the page to get',
+	},
 	createChain(false, "transactions", ["list"]),
 ];
 
