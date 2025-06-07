@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-1shot",
-  "version": "0.1.5",
+  "version": "1.0.0",
   "description": "1Shot API node for n8n",
   "keywords": [
     "n8n-community-node-package",
@@ -10,7 +10,7 @@
     "web3"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "1shotapi.com",
   "author": {
     "name": "Charlie Sibbach",
     "email": "charlie@uxly.software"
@@ -41,10 +41,12 @@
       "dist/credentials/oneShotOAuth2Api.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/OneShot/OneShot.node.js"
+      "dist/nodes/OneShot/OneShot.node.js",
+      "dist/nodes/OneShot/OneShotWebhook.node.js"
     ]
   },
   "devDependencies": {
+    "@types/node": "^22.15.30",
     "@typescript-eslint/parser": "~8.32.0",
     "eslint": "^8.57.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.3",

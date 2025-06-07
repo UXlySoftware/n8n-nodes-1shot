@@ -1,4 +1,5 @@
 import type { ICredentialType, INodeProperties } from 'n8n-workflow';
+import { oneshotApiBaseUrl } from '../nodes/OneShot/types/constants';
 
 export class oneShotOAuth2Api implements ICredentialType {
 	name = 'oneShotOAuth2Api';
@@ -26,7 +27,7 @@ export class oneShotOAuth2Api implements ICredentialType {
 			displayName: 'Access Token URL',
 			name: 'accessTokenUrl',
 			type: 'hidden',
-			default: 'https://api.1shotapi.com/v0/token',
+			default: `${oneshotApiBaseUrl}/token`,
 		},
 		{
 			displayName: 'Scope',

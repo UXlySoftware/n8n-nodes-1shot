@@ -5,11 +5,18 @@ import {
 	INodeProperties,
 	IExecuteFunctions,
 	NodeOperationError,
+	IDataObject,
 } from 'n8n-workflow';
-import { transactionOperationsFields } from './descriptions/TransactionDescription';
-import { escrowWalletOperationsFields } from './descriptions/EscrowWalletDescription';
-import { loadTransactionExecutionOptions, loadTransactionReadOptions } from './executions/options';
+import { contractMethodOperationsFields } from './descriptions/ContractMethodDescription';
+import { walletOperationsFields } from './descriptions/WalletDescription';
 import { promptOperationsFields } from './descriptions/PromptDescription';
+import { transactionOperationsFields } from './descriptions/TransactionDescription';
+import { loadContractMethodAllOptions, loadContractMethodExecutionOptions, loadContractMethodReadOptions } from './executions/options';
+import { createWalletOperation, deleteWalletOperation, getWalletOperation, listWalletsOperation, loadWalletOptions, updateWalletOperation } from './executions/Wallets';
+import { assureContractMethodsFromPromptOperation, estimateContractMethodOperation, executeContractMethodOperation, getContractMethodOperation, listContractMethodsOperation, readContractMethodOperation, simulateContractMethodOperation } from './executions/ContractMethods';
+import { oneshotApiBaseUrl } from './types/constants';
+import { getTransactionOperation, listTransactionsOperation } from './executions/Transactions';
+import { searchPromptsOperation } from './executions/Prompts';
 
 export class OneShot implements INodeType {
 	description: INodeTypeDescription = {
@@ -33,7 +40,7 @@ export class OneShot implements INodeType {
 			},
 		],
 		requestDefaults: {
-			baseURL: 'https://api.1shotapi.com/v0',
+			baseURL: oneshotApiBaseUrl,
 			url: '',
 			headers: {
 				Accept: 'application/json',
@@ -59,30 +66,42 @@ export class OneShot implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Contract Method',
+						value: 'contractMethods',
+					},
+					{
+						name: 'Prompt',
+						value: 'prompts',
+					},
+					// {
+					// 	name: 'Struct',
+					// 	value: 'structs',
+					// },
+					{
 						name: 'Transaction',
-						value: 'transaction',
+						value: 'transactions',
 					},
 					{
-						name: 'Escrow Wallet',
-						value: 'escrowWallet',
-					},
-					{
-						name: '1Shot Prompt',
-						value: 'prompt',
+						name: 'Wallet',
+						value: 'wallets',
 					},
 				],
-				default: 'transaction',
+				default: 'contractMethods',
 			} as INodeProperties,
-			...transactionOperationsFields,
-			...escrowWalletOperationsFields,
+			...contractMethodOperationsFields,
+			...walletOperationsFields,
 			...promptOperationsFields,
+			// ...structOperationsFields,
+			...transactionOperationsFields,
 		],
 	};
 
 	methods = {
 		loadOptions: {
-			loadTransactionExecutionOptions,
-			loadTransactionReadOptions,
+			loadContractMethodExecutionOptions,
+			loadContractMethodReadOptions,
+			loadContractMethodAllOptions,
+			loadWalletOptions,
 		},
 	};
 
@@ -94,241 +113,73 @@ export class OneShot implements INodeType {
 			const resource = this.getNodeParameter('resource', i) as string;
 			const operation = this.getNodeParameter('operation', i) as string;
 
-			if (resource === 'transaction') {
-				const transactionId = this.getNodeParameter('transactionId', i) as string;
-				const paramsString = this.getNodeParameter('params', i) as string;
-				let url = '';
-				let method: 'POST' = 'POST';
-
+			if (resource === 'contractMethods') {
 				if (operation === 'execute') {
-					url = `/transactions/${transactionId}/execute`;
-					// Parse the params JSON string into an object
-					const parsedParams = JSON.parse(paramsString);
-
-					
-					const additionalFields = this.getNodeParameter('additionalFields', i) as {
-						memo?: string;
-						escrowWalletId?: string;
-						authorizationList?: string;
-					};
-					const memo = additionalFields.memo;
-					const escrowWalletId = additionalFields.escrowWalletId;
-					// const authorizationList = this.getNodeParameter('authorizationList', i) as string;
-					// const parsedAuthorizationList = authorizationList != "" ? JSON.parse(authorizationList) : undefined;
-
-					// Wrap params in the expected format
-					const body = {
-						params: parsedParams,
-						escrowWalletId: escrowWalletId != "" ? escrowWalletId : undefined,
-						memo: memo != "" ? memo : undefined,
-						//authorizationList: authorizationList != "" ? authorizationList : undefined,
-					};
-					this.logger.debug('Request body', { body });
-
-					const options = {
-						method,
-						url,
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-						},
-						body,
-						json: true,
-						baseURL: 'https://api.1shotapi.com/v0',
-					};
-
-					this.logger.debug('Making request', { url, options });
-
-					const additionalCredentialOptions = {
-						oauth2: {
-							tokenType: 'Bearer',
-							keepBearer: true,
-							includeCredentialsOnRefreshOnBody: true,
-							property: 'access_token',
-							tokenExpiredStatusCode: 403,
-						},
-					};
-
-					const response = await this.helpers.requestWithAuthentication.call(
-						this,
-						'oneShotOAuth2Api',
-						options,
-						additionalCredentialOptions,
-					);
-					this.logger.debug('Response received', { response });
+					const response = await executeContractMethodOperation(this, i);
+					returnData.push(response);
+				} else if (operation === "estimate") {
+					const response = await estimateContractMethodOperation(this, i);
+					returnData.push(response);
+				} else if (operation === 'simulate') {
+					const response = await simulateContractMethodOperation(this, i);
 					returnData.push(response);
 				} else if (operation === 'read') {
-					url = `/transactions/${transactionId}/read`;
-
-					// Parse the params JSON string into an object
-					const parsedParams = JSON.parse(paramsString);
-
-					// Wrap params in the expected format
-					const body = {
-						params: parsedParams,
-					};
-					this.logger.debug('Request body', { body });
-
-					const options = {
-						method,
-						url,
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-						},
-						body,
-						json: true,
-						baseURL: 'https://api.1shotapi.com/v0',
-					};
-
-					this.logger.debug('Making request', { url, options });
-
-					const additionalCredentialOptions = {
-						oauth2: {
-							tokenType: 'Bearer',
-							keepBearer: true,
-							includeCredentialsOnRefreshOnBody: true,
-							property: 'access_token',
-							tokenExpiredStatusCode: 403,
-						},
-					};
-
-					const response = await this.helpers.requestWithAuthentication.call(
-						this,
-						'oneShotOAuth2Api',
-						options,
-						additionalCredentialOptions,
-					);
-					this.logger.debug(`Response received: "${response}"`, { response });
+					const response = await readContractMethodOperation(this, i);
+					console.log("CHARLIE", {"response": response});
+					returnData.push({"response": response});
+				} else if (operation === 'list') {
+					const response = await listContractMethodsOperation(this, i);
+					returnData.push(...response.response);
+				} else if (operation === 'get') {
+					const response = await getContractMethodOperation(this, i);
+					returnData.push(response);
+				} else if (operation === 'assureContractMethodsFromPrompt') {
+					const response = await assureContractMethodsFromPromptOperation(this, i);
+					returnData.push(...response);
+				} else {
+					throw new NodeOperationError(this.getNode(), `Unsupported operation for resource contractMethods: ${operation}`);
+				}
+			} else if (resource === 'wallets') {
+				if (operation === 'list') {
+					const response = await listWalletsOperation(this, i);
+					returnData.push(...response.response);
+				} else if (operation === 'create') {
+					const response = await createWalletOperation(this, i);
+					returnData.push(response);
+				} else if (operation === 'get') {
+					const response = await getWalletOperation(this, i);
+					returnData.push(response);
+				} else if (operation === 'update') {
+					const response = await updateWalletOperation(this, i);
+					returnData.push(response);
+				} else if (operation === 'delete') {
+					const response = await deleteWalletOperation(this, i);
 					returnData.push(response);
 				} else {
-					throw new NodeOperationError(this.getNode(), `Unsupported operation: ${operation}`);
+					throw new NodeOperationError(this.getNode(), `Unsupported operation for resource wallets: ${operation}`);
 				}
-			} else if (resource === 'escrowWallet') {
-				const chainId = this.getNodeParameter('chainId', i) as string;
-				const credentials = await this.getCredentials('oneShotOAuth2Api');
-				const businessId = credentials.businessId as string;
-
-				if (operation === 'list') {
-					const options = {
-						method: 'GET' as const,
-						url: `/business/${businessId}/wallets`,
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-						},
-						qs: { chainId },
-						json: true,
-						baseURL: 'https://api.1shotapi.com/v0',
-					};
-
-					this.logger.debug('Making request for escrow wallets', { options });
-
-					const additionalCredentialOptions = {
-						oauth2: {
-							tokenType: 'Bearer',
-							keepBearer: true,
-							includeCredentialsOnRefresh: true,
-							property: 'access_token',
-							tokenExpiredStatusCode: 403,
-						},
-					};
-
-					const response = await this.helpers.requestWithAuthentication.call(
-						this,
-						'oneShotOAuth2Api',
-						options,
-						additionalCredentialOptions,
-					);
-					this.logger.debug('Response received for escrow wallets', { response });
-					returnData.push(response);
-				}
-			} else if (resource === 'prompt') {
+			} else if (resource === 'prompts') {
 				if (operation === 'search') {
-					const query = this.getNodeParameter('query', i) as string;
-					const chainId = this.getNodeParameter('chainId', i) as string;
-					const options = {
-						method: 'POST' as const,
-						url: `/contracts/descriptions/search`,
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-						},
-						body: {
-							query,
-							chain: chainId,
-						},
-						json: true,
-						baseURL: 'https://api.1shotapi.com/v0',
-					};
-
-					const additionalCredentialOptions = {
-						oauth2: {
-							tokenType: 'Bearer',
-							keepBearer: true,
-							includeCredentialsOnRefreshOnBody: true,
-							property: 'access_token',
-							tokenExpiredStatusCode: 403,
-						},
-					};
-
-					const response = await this.helpers.requestWithAuthentication.call(
-						this,
-						'oneShotOAuth2Api',
-						options,
-						additionalCredentialOptions,
-					);
-					this.logger.debug('Response received for 1Shot Prompts', { response });
+					const response = await searchPromptsOperation(this, i);
+					returnData.push(...response);
+				} else {
+					throw new NodeOperationError(this.getNode(), `Unsupported operation for resource prompts: ${operation}`);
+				}
+			} else if (resource === 'transactions') {
+				if (operation === 'list') {
+					const response = await listTransactionsOperation(this, i);
+					returnData.push(...response.response);
+				} else if (operation === 'get') {
+					const response = await getTransactionOperation(this, i);
 					returnData.push(response);
-				} else if (operation === 'assureTools') {
-					const credentials = await this.getCredentials('oneShotOAuth2Api');
-					const businessId = credentials.businessId as string;
-					const contractAddress = this.getNodeParameter('contractAddress', i) as string;
-					const contractDescriptionId = this.getNodeParameter('contractDescriptionId', i) as string;
-					const escrowWalletId = this.getNodeParameter('escrowWalletId', i) as string;
-					const chainId = this.getNodeParameter('chainId', i) as string;
-
-					const options = {
-						method: 'POST' as const,
-						url: `/business/${businessId}/transactions/contract`,
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-						},
-						body: {
-							chain: chainId,
-							contractAddress,
-							escrowWalletId,
-							contractDescriptionId,
-						},
-						json: true,
-						baseURL: 'https://api.1shotapi.com/v0',
-					};
-
-					const additionalCredentialOptions = {
-						oauth2: {
-							tokenType: 'Bearer',
-							keepBearer: true,
-							includeCredentialsOnRefreshOnBody: true,
-							property: 'access_token',
-							tokenExpiredStatusCode: 403,
-						},
-					};
-
-					const response = await this.helpers.requestWithAuthentication.call(
-						this,
-						'oneShotOAuth2Api',
-						options,
-						additionalCredentialOptions,
-					);
-					this.logger.debug('Response received for 1Shot Prompts', { response });
-					returnData.push(response);
+				} else {
+					throw new NodeOperationError(this.getNode(), `Unsupported operation for resource transactions: ${operation}`);
 				}
 			} else {
 				throw new NodeOperationError(this.getNode(), `Unsupported resource: ${resource}`);
 			}
 		}
 
-		return [this.helpers.returnJsonArray(returnData)];
+		return [this.helpers.returnJsonArray(returnData as IDataObject[])];
 	}
 }

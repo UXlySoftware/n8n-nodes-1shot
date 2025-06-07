@@ -1,64 +1,47 @@
-import { ILoadOptionsFunctions, INodePropertyOptions, NodeOperationError } from 'n8n-workflow';
+import { ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
+import { listContractMethods } from './ContractMethods';
 
-export async function loadTransactionExecutionOptions(
+export async function loadContractMethodExecutionOptions(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-	return loadTransactionOptions(this, true);
+	return loadContractMethodOptions(this, "write");
 }
 
-export async function loadTransactionReadOptions(
+export async function loadContractMethodReadOptions(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-	return loadTransactionOptions(this, false);
+	return loadContractMethodOptions(this, "read");
 }
 
-async function loadTransactionOptions(
+export async function loadContractMethodAllOptions(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	return loadContractMethodOptions(this, undefined);
+}
+
+async function loadContractMethodOptions(
 	loadOptionsFunctions: ILoadOptionsFunctions,
-	executable: boolean,
+	methodType?: "read" | "write",
 ): Promise<INodePropertyOptions[]> {
 	const options: INodePropertyOptions[] = [];
 
-	try {
-		// Get the credentials to access businessId
-		const credentials = await loadOptionsFunctions.getCredentials('oneShotOAuth2Api');
-		const businessId = credentials.businessId as string;
+	const contractMethods = await listContractMethods(loadOptionsFunctions,
+		undefined,
+		1, // page
+		1000, // pageSize
+		undefined, // chainId
+		undefined, // contractId
+		undefined, // contractMethodId
+		undefined, // promptId
+		methodType, // methodType
+	);
 
-		if (!businessId) {
-			throw new NodeOperationError(
-				loadOptionsFunctions.getNode(),
-				'Business ID is required in credentials',
-			);
-		}
-
-		const response = await loadOptionsFunctions.helpers.requestWithAuthentication.call(
-			loadOptionsFunctions,
-			'oneShotOAuth2Api',
-			{
-				method: 'GET',
-				url: `/business/${businessId}/transactions?`,
-				qs: {
-					pageSize: 100,
-					page: 1,
-					stateMutability: executable ? ['NonPayable', 'Payable'] : ['View', 'Pure'],
-				},
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				json: true,
-				baseURL: 'https://api.1shotapi.com/v0',
-			},
-		);
-
-		for (const transaction of response.response) {
-			options.push({
-				name: transaction.name || transaction.id,
-				value: transaction.id,
-				description: transaction.description || '',
-			});
-		}
-	} catch (error) {
-		loadOptionsFunctions.logger.error(`Error loading transactions ${error.message}`, { error });
+	for (const contractMethod of contractMethods.response) {
+		options.push({
+			name: contractMethod.name,
+			value: contractMethod.id,
+			description: contractMethod.description || '',
+		});
 	}
 
 	return options;
