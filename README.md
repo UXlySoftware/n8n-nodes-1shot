@@ -1,3 +1,5 @@
+[![Watch the tutorial](https://img.youtube.com/vi/RYfPKSb6GFY/maxresdefault.jpg)](https://youtu.be/RYfPKSb6GFY)
+
 # n8n-nodes-1shot
 
 The [1Shot API](https://1shotapi.com) n8n node lets you read and write to any EVM blockchain from your n8n workflows. 1Shot API is a powerful managed wallet and transaction service for the EVM ecosystem; it ensures transactions are confirmed (handling retries and gas optimization) and sends webhook callbacks when they are finalized, making it perfect for use in any AI workflow platform. 
