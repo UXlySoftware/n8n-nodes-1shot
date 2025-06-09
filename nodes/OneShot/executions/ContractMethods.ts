@@ -1,6 +1,7 @@
 import { IExecuteFunctions, ILoadOptionsFunctions, NodeOperationError } from "n8n-workflow";
 import { EChain, PagedResponse, ContractMethod, ContractMethodTestResult, ContractMethodEstimate, Transaction, JSONValue, ERC7702Authorization } from '../types/1shot';
 import { additionalCredentialOptions, oneshotApiBaseUrl } from "../types/constants";
+import { getTransaction } from './Transactions';
 
 export async function listContractMethodsOperation(context: IExecuteFunctions, index: number) {
 	const chainId = context.getNodeParameter('chainId', index) as EChain;
@@ -76,6 +77,36 @@ export async function executeContractMethodOperation(context: IExecuteFunctions,
 	// const parsedAuthorizationList = authorizationList != "" ? JSON.parse(authorizationList) : undefined;
 
 	return await executeContractMethod(context, contractMethodId, parsedParams, walletId, memo);
+}
+
+export async function executeAndWaitContractMethodOperation(context: IExecuteFunctions, index: number): Promise<{ success: boolean, result: Transaction }> {
+	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
+	const paramsString = context.getNodeParameter('params', index) as string;
+	const parsedParams = JSON.parse(paramsString);
+
+	const additionalFields = context.getNodeParameter('additionalFields', index) as {
+		memo?: string;
+		walletId?: string;
+		authorizationList?: string;
+	};
+	const memo = additionalFields.memo;
+	const walletId = additionalFields.walletId;
+
+	let transaction = await executeContractMethod(context, contractMethodId, parsedParams, walletId, memo);
+	
+	// Wait for transaction to complete
+	let status = 'Pending';
+	while (status != 'Completed' && status != 'Failed') {
+		await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds between checks
+		transaction = await getTransaction(context, transaction.id);
+		status = transaction.status;	
+	}
+
+	if (status === 'Failed') {
+		return { success: false, result: transaction };
+	}
+
+	return { success: true, result: transaction };
 }
 
 export async function readContractMethodOperation(context: IExecuteFunctions, index: number) {

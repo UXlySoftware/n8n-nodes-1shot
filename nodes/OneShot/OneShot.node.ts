@@ -125,7 +125,6 @@ export class OneShot implements INodeType {
 					returnData.push(response);
 				} else if (operation === 'read') {
 					const response = await readContractMethodOperation(this, i);
-					console.log("CHARLIE", {"response": response});
 					returnData.push({"response": response});
 				} else if (operation === 'list') {
 					const response = await listContractMethodsOperation(this, i);
