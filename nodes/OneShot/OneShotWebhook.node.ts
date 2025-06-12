@@ -9,14 +9,14 @@ import { webhookTrigger } from './executions/Webhooks';
 
 export class OneShotWebhook implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: '1Shot Webhook',
+		displayName: '1Shot API Webhook',
 		name: 'oneShotWebhook',
 		icon: { light: 'file:oneshot.svg', dark: 'file:oneshot.svg' },
 		group: ['trigger'],
 		version: 1,
-		description: 'Starts the workflow when 1Shot sends a webhook',
+		description: 'Starts the workflow when a 1Shot API webhook is received and authenticated',
 		defaults: {
-			name: '1Shot Webhook',
+			name: '1Shot API Webhook',
 		},
 		inputs: [],
 		outputs: [NodeConnectionType.Main],
@@ -55,4 +55,4 @@ export class OneShotWebhook implements INodeType {
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		return webhookTrigger.call(this);
 	}
-} 
+}

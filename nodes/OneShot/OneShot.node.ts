@@ -20,15 +20,15 @@ import { searchPromptsOperation } from './executions/Prompts';
 
 export class OneShot implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: '1Shot',
+		displayName: '1Shot API',
 		name: 'oneShot',
 		icon: { light: 'file:oneshot.svg', dark: 'file:oneshot.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Interact with the blockchain and web3 via 1Shot API',
+		description: 'Interact with EVM blockchains via 1Shot API',
 		defaults: {
-			name: '1Shot',
+			name: '1Shot API',
 		},
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],

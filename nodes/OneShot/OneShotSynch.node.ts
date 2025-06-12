@@ -11,7 +11,7 @@ import { loadContractMethodExecutionOptions } from './executions/options';
 
 export class OneShotSynch implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: '1Shot Synch',
+		displayName: '1Shot API Submit & Wait',
 		name: 'oneShotSynch',
 		icon: { light: 'file:oneshot.svg', dark: 'file:oneshot.svg' },
 		group: ['transform'],
@@ -19,7 +19,7 @@ export class OneShotSynch implements INodeType {
 		subtitle: 'Execute and wait for transaction completion',
 		description: 'Execute a contract method and wait for the transaction to complete',
 		defaults: {
-			name: '1Shot Wait',
+			name: '1Shot API Submit & Wait',
 		},
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main, NodeConnectionType.Main],
@@ -116,4 +116,4 @@ export class OneShotSynch implements INodeType {
 			this.helpers.returnJsonArray(errorData),
 		];
 	}
-} 
+}
