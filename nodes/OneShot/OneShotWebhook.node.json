@@ -1,0 +1,20 @@
+{
+	"node": "n8n-nodes-base.oneShotWebhook",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": [
+		"Development"
+	],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://docs.1shotapi.com"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://docs.1shotapi.com"
+			}
+		]
+	}
+} 
