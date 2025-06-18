@@ -49,7 +49,7 @@ The n8n 1Shot API community node is compatible with n8n version 1.95.3 or later.
 
 ## Usage
 
-Check out our [YouTube tutorials](https://www.youtube.com/@1ShotAPI) for examples of how you can use 1Shot API to automate onchain tasks with n8n.
+Check out our [documentation](https://docs.1shotapi.com/automation/n8n.html) for more information and examples of how you can use 1Shot API to automate onchain tasks with n8n.
 
 ### x402 Workflow 
 
@@ -60,7 +60,8 @@ Check out our [YouTube tutorials](https://www.youtube.com/@1ShotAPI) for example
 Try out the [x402 workflow](/x402.json) to see how 1Shot API can simulate and execute onchain transactions. Import the json file directly into an n8n workflow, then authenticate the 1Shot API nodes against your 1Shot API account. 
 
 ```sh
-# example curl call
+# example curl call to your n8n webhook endpoint
+# be sure to change the URL to your n8n webhook url and set a proper x-payment header
 curl -X GET \
   https://n8n.1shotapi.dev/webhook-test/92c5ca23-99a7-437d-85da-84aef8bd2a25 \
   -H "x-payment: YOUR-BASE64-ENCODED-PAYMENT-PAYLOAD" \
