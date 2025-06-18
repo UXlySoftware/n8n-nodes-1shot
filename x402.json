@@ -19,23 +19,6 @@
     },
     {
       "parameters": {
-        "respondWith": "json",
-        "responseBody": "{\n  \"x402Version\": \"1\",\n  \"error\": \"X-PAYMENT header has incorrect format\"\n}",
-        "options": {
-          "responseCode": 402
-        }
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.3,
-      "position": [
-        440,
-        40
-      ],
-      "id": "605abcb3-2acc-4db4-a87a-efae930a015d",
-      "name": "Respond to Webhook"
-    },
-    {
-      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -67,23 +50,6 @@
       ],
       "id": "82409682-6932-4714-9f7c-27c60a692245",
       "name": "Check for presence of X-HEADER"
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "{\n  \"x402Version\": \"1\",\n  \"error\": \"X-PAYMENT header did not verify\"\n}",
-        "options": {
-          "responseCode": 402
-        }
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.3,
-      "position": [
-        1060,
-        -60
-      ],
-      "id": "8790cc26-6626-47fe-ae0f-8142b3fde734",
-      "name": "Respond to Webhook1"
     },
     {
       "parameters": {
@@ -155,25 +121,8 @@
     },
     {
       "parameters": {
-        "respondWith": "text",
-        "responseBody": "\"Payment Received!\" ",
-        "options": {
-          "responseCode": 200
-        }
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.3,
-      "position": [
-        1080,
-        -300
-      ],
-      "id": "5b29d382-d7dc-484c-b700-3de0c5935c8a",
-      "name": "Respond to Webhook2"
-    },
-    {
-      "parameters": {
         "contractMethodId": "fe22ef76-e6af-4912-ba8d-17e2e72c1feb",
-        "params": "{\n  \"from\": \"{{ $('Decode & Validate X-Payment').item.json.decodedXPayment.payload.authorization.from }}\",\n  \"to\": \"{{ $('Decode & Validate X-Payment').item.json.decodedXPayment.payload.authorization.to }}\",\n  \"value\": \"{{ $('Decode & Validate X-Payment').item.json.decodedXPayment.payload.authorization.value }}\",\n  \"validAfter\": \"{{ $('Decode & Validate X-Payment').item.json.decodedXPayment.payload.authorization.validAfter }}\",\n  \"validBefore\": \"{{ $('Decode & Validate X-Payment').item.json.decodedXPayment.payload.authorization.validBefore }}\",\n  \"nonce\": \"{{ $('Decode & Validate X-Payment').item.json.decodedXPayment.payload.authorization.nonce }}\",\n  \"signature\": \"{{ $('Decode & Validate X-Payment').item.json.decodedXPayment.payload.signature }}\"\n} ",
+        "params": "={\n\"to\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.to }}\",\n\"from\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.from }}\",\n\"value\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.value }}\",\n\"validAfter\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.validAfter }}\",\n\"validBefore\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.validBefore }}\",\n\"nonce\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.nonce }}\",\n\"signature\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.signature }}\"\n}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-1shot.oneShotSynch",
@@ -224,6 +173,57 @@
       ],
       "id": "cfa44cb3-de5c-4ef2-9950-cca2d2bdcfbc",
       "name": "Ensure Well Formatted Payment Payload"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"x402Version\": \"1\",\n  \"error\": \"X-PAYMENT header has incorrect format\"\n}",
+        "options": {
+          "responseCode": 402
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        440,
+        40
+      ],
+      "id": "605abcb3-2acc-4db4-a87a-efae930a015d",
+      "name": "Response: Missing or Invalid Payment Headers"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"x402Version\": \"1\",\n  \"error\": \"X-PAYMENT header did not verify\"\n}",
+        "options": {
+          "responseCode": 402
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        1060,
+        -60
+      ],
+      "id": "8790cc26-6626-47fe-ae0f-8142b3fde734",
+      "name": "Response: Payment Invalid"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "\"Payment Received!\" ",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        1080,
+        -300
+      ],
+      "id": "5b29d382-d7dc-484c-b700-3de0c5935c8a",
+      "name": "Response: 200 - Payment Successful"
     }
   ],
   "pinData": {},
@@ -250,7 +250,7 @@
         ],
         [
           {
-            "node": "Respond to Webhook",
+            "node": "Response: Missing or Invalid Payment Headers",
             "type": "main",
             "index": 0
           }
@@ -290,7 +290,7 @@
         ],
         [
           {
-            "node": "Respond to Webhook1",
+            "node": "Response: Payment Invalid",
             "type": "main",
             "index": 0
           }
@@ -301,14 +301,14 @@
       "main": [
         [
           {
-            "node": "Respond to Webhook2",
+            "node": "Response: 200 - Payment Successful",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Respond to Webhook1",
+            "node": "Response: Payment Invalid",
             "type": "main",
             "index": 0
           }
@@ -326,7 +326,7 @@
         ],
         [
           {
-            "node": "Respond to Webhook",
+            "node": "Response: Missing or Invalid Payment Headers",
             "type": "main",
             "index": 0
           }
@@ -338,7 +338,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "f5de7ec4-606c-4572-b420-1aac6d4576d8",
+  "versionId": "ad2ce6b4-403c-46ad-8b01-9e0b68592a2f",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "62f017ec8f130d172e2e5f39bbf09515036bfd403dfa60fe06f5ab14b78705d0"
