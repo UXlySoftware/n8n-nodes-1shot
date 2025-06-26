@@ -25,6 +25,25 @@ export class PagedResponse<T> {
         public totalResults: number,) { }
 }
 
+export class ChainInfo {
+	public constructor(
+		public name: string,
+		public chainId: number,
+		public averageBlockMiningTime: number,
+		public nativeCurrency: NativeCurrencyInformation,
+		public type: string,
+	) {}
+}
+
+export class NativeCurrencyInformation {
+	public constructor(
+		public name: string,
+		public symbol: string,
+		public decimals: number,
+	) {}
+}
+
+
 export interface AccountBalanceDetails {
     type: number;
     ticker: string;

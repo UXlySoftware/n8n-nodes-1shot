@@ -11,12 +11,14 @@ import { contractMethodOperationsFields } from './descriptions/ContractMethodDes
 import { walletOperationsFields } from './descriptions/WalletDescription';
 import { promptOperationsFields } from './descriptions/PromptDescription';
 import { transactionOperationsFields } from './descriptions/TransactionDescription';
-import { loadContractMethodAllOptions, loadContractMethodExecutionOptions, loadContractMethodReadOptions } from './executions/options';
+import { loadChainOptions, loadContractMethodAllOptions, loadContractMethodExecutionOptions, loadContractMethodReadOptions } from './executions/options';
 import { createWalletOperation, deleteWalletOperation, getWalletOperation, listWalletsOperation, loadWalletOptions, updateWalletOperation } from './executions/Wallets';
 import { assureContractMethodsFromPromptOperation, estimateContractMethodOperation, executeContractMethodOperation, getContractMethodOperation, listContractMethodsOperation, readContractMethodOperation, simulateContractMethodOperation } from './executions/ContractMethods';
 import { oneshotApiBaseUrl } from './types/constants';
 import { getTransactionOperation, listTransactionsOperation } from './executions/Transactions';
 import { searchPromptsOperation } from './executions/Prompts';
+import { chainOperationsFields } from './descriptions/ChainDescription';
+import { listChainsOperation } from './executions/Chains';
 
 export class OneShot implements INodeType {
 	description: INodeTypeDescription = {
@@ -66,6 +68,10 @@ export class OneShot implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Chain',
+						value: 'chains',
+					},
+					{
 						name: 'Contract Method',
 						value: 'contractMethods',
 					},
@@ -88,6 +94,7 @@ export class OneShot implements INodeType {
 				],
 				default: 'contractMethods',
 			} as INodeProperties,
+			...chainOperationsFields,
 			...contractMethodOperationsFields,
 			...walletOperationsFields,
 			...promptOperationsFields,
@@ -98,6 +105,7 @@ export class OneShot implements INodeType {
 
 	methods = {
 		loadOptions: {
+			loadChainOptions,
 			loadContractMethodExecutionOptions,
 			loadContractMethodReadOptions,
 			loadContractMethodAllOptions,
@@ -173,6 +181,13 @@ export class OneShot implements INodeType {
 					returnData.push(response);
 				} else {
 					throw new NodeOperationError(this.getNode(), `Unsupported operation for resource transactions: ${operation}`);
+				}
+			} else if (resource === 'chains') {
+				if (operation === 'list') {
+					const response = await listChainsOperation(this, i);
+					returnData.push(...response.response);
+				} else {
+					throw new NodeOperationError(this.getNode(), `Unsupported operation for resource chains: ${operation}`);
 				}
 			} else {
 				throw new NodeOperationError(this.getNode(), `Unsupported resource: ${resource}`);
