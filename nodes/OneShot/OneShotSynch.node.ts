@@ -24,6 +24,7 @@ export class OneShotSynch implements INodeType {
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main, NodeConnectionType.Main],
 		outputNames: ['Success', 'Error'],
+		usableAsTool: true,
 		credentials: [
 			{
 				name: 'oneShotOAuth2Api',
