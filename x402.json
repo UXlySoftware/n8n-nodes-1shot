@@ -11,7 +11,7 @@
       "typeVersion": 2,
       "position": [
         -500,
-        -180
+        -50
       ],
       "id": "bf854266-4250-4491-af67-ff8fc3b63ac6",
       "name": "Webhook",
@@ -45,8 +45,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -220,
-        -100
+        -280,
+        -50
       ],
       "id": "82409682-6932-4714-9f7c-27c60a692245",
       "name": "Check for presence of X-HEADER"
@@ -58,8 +58,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        0,
-        -280
+        -60,
+        -125
       ],
       "id": "efb6f824-6679-4ad4-9b05-c20ef27a706d",
       "name": "Decode & Validate X-Payment"
@@ -67,14 +67,14 @@
     {
       "parameters": {
         "operation": "simulate",
-        "contractMethodId": "fe22ef76-e6af-4912-ba8d-17e2e72c1feb",
+        "contractMethodId": "b63aaaa1-059d-4c38-928a-33ad17d66827",
         "params": "={\n  \"from\": \"{{ $json.decodedXPayment.payload.authorization.from }}\",\n  \"to\": \"{{ $json.decodedXPayment.payload.authorization.to }}\",\n  \"value\": \"{{ $json.decodedXPayment.payload.authorization.value }}\",\n  \"validAfter\": \"{{ $json.decodedXPayment.payload.authorization.validAfter }}\",\n  \"validBefore\": \"{{ $json.decodedXPayment.payload.authorization.validBefore }}\",\n  \"nonce\": \"{{ $json.decodedXPayment.payload.authorization.nonce }}\",\n  \"signature\": \"{{ $json.decodedXPayment.payload.signature }}\"\n} "
       },
       "type": "n8n-nodes-1shot.oneShot",
       "typeVersion": 1,
       "position": [
-        420,
-        -300
+        380,
+        -175
       ],
       "id": "6cad76b8-1a56-4028-92f4-a6fb696e1647",
       "name": "Simulate Payment",
@@ -113,23 +113,23 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        640,
-        -180
+        600,
+        -175
       ],
       "id": "a2f18d76-8bea-4d1c-9287-6c0a7594d6da",
       "name": "On Successful Payment Simulation"
     },
     {
       "parameters": {
-        "contractMethodId": "fe22ef76-e6af-4912-ba8d-17e2e72c1feb",
+        "contractMethodId": "b63aaaa1-059d-4c38-928a-33ad17d66827",
         "params": "={\n\"to\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.to }}\",\n\"from\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.from }}\",\n\"value\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.value }}\",\n\"validAfter\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.validAfter }}\",\n\"validBefore\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.validBefore }}\",\n\"nonce\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.authorization.nonce }}\",\n\"signature\": \"{{ $('Ensure Well Formatted Payment Payload').item.json.decodedXPayment.payload.signature }}\"\n}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-1shot.oneShotSynch",
       "typeVersion": 1,
       "position": [
-        840,
-        -280
+        820,
+        -250
       ],
       "id": "1f182441-25da-41cc-913d-8e724866d7d3",
       "name": "1Shot API Submit & Wait",
@@ -168,8 +168,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        200,
-        -280
+        160,
+        -120
       ],
       "id": "cfa44cb3-de5c-4ef2-9950-cca2d2bdcfbc",
       "name": "Ensure Well Formatted Payment Payload"
@@ -185,8 +185,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.3,
       "position": [
-        440,
-        40
+        380,
+        50
       ],
       "id": "605abcb3-2acc-4db4-a87a-efae930a015d",
       "name": "Response: Missing or Invalid Payment Headers"
@@ -202,8 +202,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.3,
       "position": [
-        1060,
-        -60
+        1040,
+        -75
       ],
       "id": "8790cc26-6626-47fe-ae0f-8142b3fde734",
       "name": "Response: Payment Invalid"
@@ -219,11 +219,83 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.3,
       "position": [
-        1080,
+        1040,
         -300
       ],
       "id": "5b29d382-d7dc-484c-b700-3de0c5935c8a",
       "name": "Response: 200 - Payment Successful"
+    },
+    {
+      "parameters": {
+        "content": "## x402 Payment Endpoint \n\nThis workflow fragment can be used to monetize any workflow you can build in n8n by accepting stablecoin payments via an API call.\n\nLearn more about the [x402 payment](https://www.x402.org/) protocol. \n\nWatch the [YouTube tutorial](https://youtu.be/m3ThthLtj3g) video.",
+        "height": 220,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        -320
+      ],
+      "id": "ff4b8de5-6be4-4cce-abc6-05e3902eb535",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Any ERC-20 on any EVM\n\nWith the 1Shot API node, you can accept any ERC-20 with the appropriate transferWithAuthorization methods.",
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        420,
+        -400
+      ],
+      "id": "7edff090-85d5-48e6-9d86-203bbf3cea11",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Put your workflow down here \n\nOnce the payment transaction has been confirmed, replace the `Response: 200 - Payment Successful` block with your workflow which responds to the user with the appropriate premium content. ",
+        "height": 200,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        -360
+      ],
+      "id": "9b46463f-be85-47e2-a05c-96a696f1965f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Example Curl Command\n\nYou can test the webhook endpoint with a command like this (be sure to use a properly formatted x-payment header payload): \n\n```sh\n# swap out the URL here for you webhook URL endpoint\ncurl -X GET \\\n  https://n8n.1shotapi.dev/webhook-test/92c5ca23-99a7-437d-85da-84aef8bd2a25 \\\n  -H \"x-payment: YOUR-BASE64-ENCODED-PAYMENT-PAYLOAD\" \\\n  -H \"User-Agent: CustomUserAgent/1.0\" \\\n  -H \"Accept: application/json\"\n```",
+        "height": 280,
+        "width": 840
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -980,
+        140
+      ],
+      "id": "4e74105c-cf34-45bb-a805-9e3dec1b2435",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Ensure Required Payment Details\n\nUse this block to add/check for payment detail requirements like minimum payment amount. "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -300
+      ],
+      "id": "ea9adf09-d52c-4ef5-a468-db1dc3247270",
+      "name": "Sticky Note4"
     }
   ],
   "pinData": {},
@@ -338,11 +410,18 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "ad2ce6b4-403c-46ad-8b01-9e0b68592a2f",
+  "versionId": "f5595fe7-92b3-4096-aa95-fbd5c78b0a66",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "62f017ec8f130d172e2e5f39bbf09515036bfd403dfa60fe06f5ab14b78705d0"
   },
   "id": "EfbdYnnqgNACIN81",
-  "tags": []
+  "tags": [
+    {
+      "createdAt": "2025-06-19T04:23:28.149Z",
+      "updatedAt": "2025-06-19T04:23:28.149Z",
+      "id": "ChlnN7rtKHJMnWmM",
+      "name": "x402"
+    }
+  ]
 }
