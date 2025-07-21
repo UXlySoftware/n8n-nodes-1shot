@@ -16,8 +16,16 @@ export const contractMethodOperations: INodeProperties[] = [
 			{
 				name: 'Assure Contract Methods From Prompt',
 				value: 'assureContractMethodsFromPrompt',
-				description: 'Make sure you have a set of Contract Methods ready to use based on your chosen Prompt',
+				description:
+					'Make sure you have a set of Contract Methods ready to use based on your chosen Prompt',
 				action: 'Assure contract methods from prompt',
+			},
+			{
+				name: 'Encode',
+				value: 'encode',
+				description:
+					'Encode a contract method call. This produces the calldata for the contract method, which is sometimes required for other contract methods.',
+				action: 'Encode a contract method call',
 			},
 			{
 				name: 'Estimate',
@@ -30,6 +38,13 @@ export const contractMethodOperations: INodeProperties[] = [
 				value: 'execute',
 				description: 'Execute a contract method on the blockchain',
 				action: 'Execute a contract method',
+			},
+			{
+				name: 'Execute as Delegator',
+				value: 'executeAsDelegator',
+				description:
+					'Execute a contract method on the blockchain using a stored ERC-7702 delgation',
+				action: 'Execute a contract method as delegator',
 			},
 			{
 				name: 'Get',
@@ -52,7 +67,8 @@ export const contractMethodOperations: INodeProperties[] = [
 			{
 				name: 'Simulate',
 				value: 'simulate',
-				description: 'Simulate a contract method call and see if it would succeed with the current state of the chain',
+				description:
+					'Simulate a contract method call and see if it would succeed with the current state of the chain',
 				action: 'Simulate a contract method call',
 			},
 		],
@@ -72,11 +88,12 @@ const contractMethodFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['contractMethods'],
-				operation: ['execute', "estimate", "simulate"],
+				operation: ['execute', 'executeAsDelegator', 'encode', 'estimate', 'simulate'],
 			},
 		},
 		default: '',
-		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
 	{
 		displayName: 'Contract Method Name or ID',
@@ -104,12 +121,26 @@ const contractMethodFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['contractMethods'],
-				operation: ['execute', "estimate", "simulate", "read"],
+				operation: ['execute', 'executeAsDelegator', 'encode', 'estimate', 'simulate', 'read'],
 			},
 		},
 		default: '{}',
 		description:
 			'The parameters to pass to the Contract Method. Enter a JSON object (e.g., {"to": "0x3e6a2f0CBA03d293B54c9fCF354948903007a798", "amount": "10000"}).',
+	},
+	{
+		displayName: 'Delegator Wallet Address',
+		name: 'delegatorWalletAddress',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['executeAsDelegator'],
+			},
+		},
+		default: '',
+		description: 'The address of the delagator wallet to use for the contract method',
 	},
 	{
 		displayName: 'Additional Fields',
@@ -120,7 +151,7 @@ const contractMethodFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['contractMethods'],
-				operation: ['execute'],
+				operation: ['execute', 'executeAsDelegator', 'encode'],
 			},
 		},
 		options: [
@@ -130,13 +161,26 @@ const contractMethodFields: INodeProperties[] = [
 				type: 'string',
 				default: '',
 				description: 'The ID of the Wallet to use for this Contract Method',
+				displayOptions: {
+					show: {
+						resource: ['contractMethods'],
+						operation: ['execute', 'executeAsDelegator'],
+					},
+				},
 			},
 			{
 				displayName: 'Memo',
 				name: 'memo',
 				type: 'string',
 				default: '',
-				description: 'Optional text to include with the Transaction after the Contract Method is executed',
+				description:
+					'Optional text to include with the Transaction after the Contract Method is executed',
+				displayOptions: {
+					show: {
+						resource: ['contractMethods'],
+						operation: ['execute', 'executeAsDelegator'],
+					},
+				},
 			},
 			{
 				displayName: 'Authorization List',
@@ -144,6 +188,12 @@ const contractMethodFields: INodeProperties[] = [
 				type: 'json',
 				default: '[]',
 				description: 'List of ERC-7702 authorizations for the Contract Method',
+				displayOptions: {
+					show: {
+						resource: ['contractMethods'],
+						operation: ['execute', 'encode'],
+					},
+				},
 			},
 		],
 	},
@@ -240,7 +290,8 @@ const contractMethodFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Enter the address of the contract to assure contract methods from. This is required, and can be pulled from the prompt if needed.',
+		description:
+			'Enter the address of the contract to assure contract methods from. This is required, and can be pulled from the prompt if needed.',
 	},
 	{
 		displayName: 'Prompt ID',
@@ -271,7 +322,8 @@ const contractMethodFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Select the Wallet to use for the contract methods. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description:
+			'Select the Wallet to use for the contract methods. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Page Number',

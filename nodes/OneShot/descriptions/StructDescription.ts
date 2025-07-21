@@ -33,7 +33,8 @@ export const structOperations: INodeProperties[] = [
 			{
 				name: 'Delete Struct Param',
 				value: 'deleteStructParam',
-				description: 'Delete a parameter from an existing Struct. Because we require the indexes to remain in order, you can really only delete the last parameter.',
+				description:
+					'Delete a parameter from an existing Struct. Because we require the indexes to remain in order, you can really only delete the last parameter.',
 				action: 'Delete struct param',
 			},
 		],
@@ -73,7 +74,4 @@ const structFields: INodeProperties[] = [
 	},
 ];
 
-export const structOperationsFields: INodeProperties[] = [
-	...structOperations,
-	...structFields,
-];
+export const structOperationsFields: INodeProperties[] = [...structOperations, ...structFields];

@@ -7,7 +7,8 @@ export async function loadChainOptions(
 ): Promise<INodePropertyOptions[]> {
 	const options: INodePropertyOptions[] = [];
 
-	const chains = await listChains(this,
+	const chains = await listChains(
+		this,
 		1, // page
 		1000, // pageSize
 	);
@@ -26,13 +27,13 @@ export async function loadChainOptions(
 export async function loadContractMethodExecutionOptions(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-	return loadContractMethodOptions(this, "write");
+	return loadContractMethodOptions(this, 'write');
 }
 
 export async function loadContractMethodReadOptions(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-	return loadContractMethodOptions(this, "read");
+	return loadContractMethodOptions(this, 'read');
 }
 
 export async function loadContractMethodAllOptions(
@@ -43,11 +44,12 @@ export async function loadContractMethodAllOptions(
 
 async function loadContractMethodOptions(
 	loadOptionsFunctions: ILoadOptionsFunctions,
-	methodType?: "read" | "write",
+	methodType?: 'read' | 'write',
 ): Promise<INodePropertyOptions[]> {
 	const options: INodePropertyOptions[] = [];
 
-	const contractMethods = await listContractMethods(loadOptionsFunctions,
+	const contractMethods = await listContractMethods(
+		loadOptionsFunctions,
 		undefined,
 		1, // page
 		1000, // pageSize

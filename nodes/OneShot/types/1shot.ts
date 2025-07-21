@@ -1,28 +1,67 @@
-export type EChain = 1 | 11155111 | 42 | 137 | 43114 | 43113 | 80002 | 100 | 56 | 1284 | 42161 | 10 | 592 | 81 | 97 | 101 | 324 | 8453 | 84532 | 88888 | 11297108109 | 42220 | 130 | 480 | 81457;
+export type EChain =
+	| 1
+	| 11155111
+	| 42
+	| 137
+	| 43114
+	| 43113
+	| 80002
+	| 100
+	| 56
+	| 1284
+	| 42161
+	| 10
+	| 592
+	| 81
+	| 97
+	| 101
+	| 324
+	| 8453
+	| 84532
+	| 88888
+	| 11297108109
+	| 42220
+	| 130
+	| 480
+	| 81457;
 
 export type ETransactionStatus = 'Pending' | 'Submitted' | 'Completed' | 'Retrying' | 'Failed';
 export type ESolidityStateMutability = 'nonpayable' | 'payable' | 'view' | 'pure';
-export type ESolidityAbiParameterType = 'address' | 'bool' | 'bytes' | 'int' | 'string' | 'uint' | 'struct';
+export type ESolidityAbiParameterType =
+	| 'address'
+	| 'bool'
+	| 'bytes'
+	| 'int'
+	| 'string'
+	| 'uint'
+	| 'struct';
 
-export type JSONValue = string | number | boolean | null | JSONValue[] | { [key: string]: JSONValue };
+export type JSONValue =
+	| string
+	| number
+	| boolean
+	| null
+	| JSONValue[]
+	| { [key: string]: JSONValue };
 
 export interface EntityBookKeeping {
-    deleted: boolean;
-    updated: number;
-    created: number;
+	deleted: boolean;
+	updated: number;
+	created: number;
 }
 
 export interface EntityBookKeepingWithoutDeleted {
-    updated: number;
-    created: number;
+	updated: number;
+	created: number;
 }
 
 export class PagedResponse<T> {
-    public constructor(
-        public response: T[],
-        public page: number,
-        public pageSize: number,
-        public totalResults: number,) { }
+	public constructor(
+		public response: T[],
+		public page: number,
+		public pageSize: number,
+		public totalResults: number,
+	) {}
 }
 
 export class ChainInfo {
@@ -43,146 +82,145 @@ export class NativeCurrencyInformation {
 	) {}
 }
 
-
 export interface AccountBalanceDetails {
-    type: number;
-    ticker: string;
-    chainId: EChain;
-    tokenAddress: string;
-    accountAddress: string;
-    balance: string;
-    decimals: number;
+	type: number;
+	ticker: string;
+	chainId: EChain;
+	tokenAddress: string;
+	accountAddress: string;
+	balance: string;
+	decimals: number;
 }
 
 export interface Wallet {
-    id: string;
-    accountAddress: string;
-    businessId: string | null;
-    userId: string | null;
-    chainId: EChain;
-    name: string;
-    description: string;
-    isAdmin: boolean;
-    accountBalanceDetails: AccountBalanceDetails | null;
-    updated: number;
-    created: number;
+	id: string;
+	accountAddress: string;
+	businessId: string | null;
+	userId: string | null;
+	chainId: EChain;
+	name: string;
+	description: string;
+	isAdmin: boolean;
+	accountBalanceDetails: AccountBalanceDetails | null;
+	updated: number;
+	created: number;
 }
 
 export interface SolidityStructParam {
-    id: string;
-    structId: string;
-    name: string;
-    description?: string;
-    type: ESolidityAbiParameterType;
-    index: number;
-    staticValue?: string;
-    typeSize?: number;
-    typeSize2?: number;
-    isArray?: boolean;
-    arraySize?: number;
-    typeStructId?: string;
-    typeStruct?: SolidityStruct;
+	id: string;
+	structId: string;
+	name: string;
+	description?: string;
+	type: ESolidityAbiParameterType;
+	index: number;
+	staticValue?: string;
+	typeSize?: number;
+	typeSize2?: number;
+	isArray?: boolean;
+	arraySize?: number;
+	typeStructId?: string;
+	typeStruct?: SolidityStruct;
 }
 
 export interface SolidityStruct {
-    id: string;
-    businessId: string;
-    name: string;
-    params: SolidityStructParam[];
-    updated: number;
-    created: number;
+	id: string;
+	businessId: string;
+	name: string;
+	params: SolidityStructParam[];
+	updated: number;
+	created: number;
 }
 
 export interface ContractMethod {
-    id: string;
-    businessId: string;
-    chainId: EChain;
-    contractAddress: string;
-    walletId: string;
-    name: string;
-    description: string;
-    functionName: string;
-    inputs: SolidityStructParam[];
-    outputs: SolidityStructParam[];
-    stateMutability: ESolidityStateMutability;
-    promptId: string | null;
-    callbackUrl: string | null;
-    publicKey: string | null;
-    deleted: boolean;
-    updated: number;
-    created: number;
+	id: string;
+	businessId: string;
+	chainId: EChain;
+	contractAddress: string;
+	walletId: string;
+	name: string;
+	description: string;
+	functionName: string;
+	inputs: SolidityStructParam[];
+	outputs: SolidityStructParam[];
+	stateMutability: ESolidityStateMutability;
+	promptId: string | null;
+	callbackUrl: string | null;
+	publicKey: string | null;
+	deleted: boolean;
+	updated: number;
+	created: number;
 }
 
 export interface Transaction {
-    id: string;
-    contractMethodId: string;
-    apiCredentialId: string | null;
-    apiKey: string | null;
-    userId: string | null;
-    status: ETransactionStatus;
-    transactionHash: string | null;
-    name: string;
-    functionName: string;
-    chainId: EChain;
-    memo: string | null;
-    completed: number | null;
-    deleted: boolean;
-    updated: number;
-    created: number;
+	id: string;
+	contractMethodId: string;
+	apiCredentialId: string | null;
+	apiKey: string | null;
+	userId: string | null;
+	status: ETransactionStatus;
+	transactionHash: string | null;
+	name: string;
+	functionName: string;
+	chainId: EChain;
+	memo: string | null;
+	completed: number | null;
+	deleted: boolean;
+	updated: number;
+	created: number;
 }
 
 export interface ContractMethodEstimate {
-    chainId: EChain;
-    contractAddress: string;
-    functionName: string;
-    gasAmount: string;
-    maxFeePerGas: string | null;
-    maxPriorityFeePerGas: string | null;
-    gasPrice: string | null;
+	chainId: EChain;
+	contractAddress: string;
+	functionName: string;
+	gasAmount: string;
+	maxFeePerGas: string | null;
+	maxPriorityFeePerGas: string | null;
+	gasPrice: string | null;
 }
 
 export interface ContractMethodTestResult {
-    success: boolean;
-    result: any | null;
-    error: any | null;
+	success: boolean;
+	result: any | null;
+	error: any | null;
 }
 
 export interface ContractFunctionParamPrompt {
-    index: number;
-    name: string;
-    description: string;
-    tags: string[];
+	index: number;
+	name: string;
+	description: string;
+	tags: string[];
 }
 
 export interface ContractFunctionPrompt {
-    name: string;
-    description: string;
-    tags: string[];
-    inputs: ContractFunctionParamPrompt[];
-    outputs: ContractFunctionParamPrompt[];
+	name: string;
+	description: string;
+	tags: string[];
+	inputs: ContractFunctionParamPrompt[];
+	outputs: ContractFunctionParamPrompt[];
 }
 
 export interface Prompt {
-    id: string;
-    userId: string;
-    chainId: EChain;
-    contractAddress: string;
-    name: string;
-    description: string;
-    tags: string[];
-    updated: number;
-    created: number;
+	id: string;
+	userId: string;
+	chainId: EChain;
+	contractAddress: string;
+	name: string;
+	description: string;
+	tags: string[];
+	updated: number;
+	created: number;
 }
 
 export interface FullPrompt extends Prompt {
-    functions: ContractFunctionPrompt[];
+	functions: ContractFunctionPrompt[];
 }
 
 export interface ERC7702Authorization {
-    address: string;
-    nonce: string;
-    chainId: EChain;
-    signature: string;
+	address: string;
+	nonce: string;
+	chainId: EChain;
+	signature: string;
 }
 
 export interface SolidityStructParamUpdate {
@@ -208,4 +246,8 @@ export interface NewSolidityStructParam extends SolidityStructParamUpdate {
 export interface NewSolidityStruct {
 	name?: string;
 	params: NewSolidityStructParam[];
+}
+
+export interface EncodeContractMethodResult {
+	data: string;
 }
