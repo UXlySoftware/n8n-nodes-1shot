@@ -43,8 +43,7 @@ const transactionFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description:
-			'Enter the Transaction ID you want to get',
+		description: 'Enter the Transaction ID you want to get',
 	},
 	{
 		displayName: 'Status',
@@ -77,7 +76,7 @@ const transactionFields: INodeProperties[] = [
 			{
 				name: 'Retrying',
 				value: 'Retrying',
-			},	
+			},
 			{
 				name: 'Failed',
 				value: 'Failed',
@@ -166,7 +165,7 @@ const transactionFields: INodeProperties[] = [
 		default: 25,
 		description: 'Enter the size of the page to get',
 	},
-	createChain(false, "transactions", ["list"]),
+	createChain(false, 'transactions', ['list']),
 ];
 
 export const transactionOperationsFields: INodeProperties[] = [

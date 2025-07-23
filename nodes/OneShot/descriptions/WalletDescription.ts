@@ -50,7 +50,7 @@ export const walletOperations: INodeProperties[] = [
 
 const walletFields: INodeProperties[] = [
 	createChain(false, 'wallets', ['list', 'update']),
-	createChain(true, 'wallets', ['create',]),
+	createChain(true, 'wallets', ['create']),
 	{
 		displayName: 'Name',
 		name: 'name',
@@ -72,7 +72,7 @@ const walletFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['wallets'],
-				operation: ['get',],
+				operation: ['get'],
 			},
 		},
 		default: '',
@@ -90,11 +90,12 @@ const walletFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['wallets'],
-				operation: ['update','delete'],
+				operation: ['update', 'delete'],
 			},
 		},
 		default: '',
-		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
 	{
 		displayName: 'Name',
@@ -153,7 +154,4 @@ const walletFields: INodeProperties[] = [
 	},
 ];
 
-export const walletOperationsFields: INodeProperties[] = [
-	...walletOperations,
-	...walletFields,
-];
+export const walletOperationsFields: INodeProperties[] = [...walletOperations, ...walletFields];

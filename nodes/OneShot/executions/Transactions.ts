@@ -46,37 +46,35 @@ export async function listTransactions(
 		const businessId = credentials.businessId as string;
 
 		if (!businessId) {
-			throw new NodeOperationError(
-				context.getNode(),
-				'Business ID is required in credentials',
-			);
+			throw new NodeOperationError(context.getNode(), 'Business ID is required in credentials');
 		}
 
-		const response: PagedResponse<Transaction> = await context.helpers.requestWithAuthentication.call(
-			context,
-			'oneShotOAuth2Api',
-			{
-				method: 'GET',
-				url: `/business/${businessId}/transactions`,
-				qs: {
-					chainId,
-					pageSize: pageSize ?? 25,
-					page: page ?? 1,
-					status,
-					walletId,
-					contractMethodId,
-					apiCredentialId,
-					userId,
+		const response: PagedResponse<Transaction> =
+			await context.helpers.requestWithAuthentication.call(
+				context,
+				'oneShotOAuth2Api',
+				{
+					method: 'GET',
+					url: `/business/${businessId}/transactions`,
+					qs: {
+						chainId,
+						pageSize: pageSize ?? 25,
+						page: page ?? 1,
+						status,
+						walletId,
+						contractMethodId,
+						apiCredentialId,
+						userId,
+					},
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					json: true,
+					baseURL: oneshotApiBaseUrl,
 				},
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				json: true,
-				baseURL: oneshotApiBaseUrl,
-			},
-			additionalCredentialOptions,
-		);
+				additionalCredentialOptions,
+			);
 
 		return response;
 	} catch (error) {

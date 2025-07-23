@@ -40,7 +40,4 @@ const webhookFields: INodeProperties[] = [
 	},
 ];
 
-export const webhookOperationsFields: INodeProperties[] = [
-	...webhookOperations,
-	...webhookFields,
-]; 
+export const webhookOperationsFields: INodeProperties[] = [...webhookOperations, ...webhookFields];

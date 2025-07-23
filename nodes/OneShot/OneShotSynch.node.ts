@@ -6,7 +6,10 @@ import {
 	IDataObject,
 } from 'n8n-workflow';
 import { oneshotApiBaseUrl } from './types/constants';
-import { executeAndWaitContractMethodOperation } from './executions/ContractMethods';
+import {
+	executeAndWaitContractMethodOperation,
+	executeAsDelegatorAndWaitContractMethodOperation,
+} from './executions/ContractMethods';
 import { loadContractMethodExecutionOptions } from './executions/options';
 
 export class OneShotSynch implements INodeType {
@@ -40,6 +43,29 @@ export class OneShotSynch implements INodeType {
 		},
 		properties: [
 			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {},
+				options: [
+					{
+						name: 'Execute',
+						value: 'execute',
+						description: 'Execute a contract method on the blockchain',
+						action: 'Execute a contract method',
+					},
+					{
+						name: 'Execute as Delegator',
+						value: 'executeAsDelegator',
+						description:
+							'Execute a contract method on the blockchain using a stored ERC-7702 delgation',
+						action: 'Execute a contract method as delegator',
+					},
+				],
+				default: 'execute',
+			},
+			{
 				displayName: 'Contract Method Name or ID',
 				name: 'contractMethodId',
 				type: 'options',
@@ -47,17 +73,41 @@ export class OneShotSynch implements INodeType {
 					loadOptionsMethod: 'loadContractMethodExecutionOptions',
 				},
 				required: true,
+				displayOptions: {
+					show: {
+						operation: ['execute', 'executeAsDelegator'],
+					},
+				},
 				default: '',
-				description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+				description:
+					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 			},
 			{
 				displayName: 'Parameters',
 				name: 'params',
 				type: 'json',
 				required: true,
+				displayOptions: {
+					show: {
+						operation: ['execute', 'executeAsDelegator'],
+					},
+				},
 				default: '{}',
 				description:
 					'The parameters to pass to the Contract Method. Enter a JSON object (e.g., {"to": "0x3e6a2f0CBA03d293B54c9fCF354948903007a798", "amount": "10000"}).',
+			},
+			{
+				displayName: 'Delegator Wallet Address',
+				name: 'delegatorWalletAddress',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['executeAsDelegator'],
+					},
+				},
+				default: '',
+				description: 'The address of the delagator wallet to use for the contract method',
 			},
 			{
 				displayName: 'Additional Fields',
@@ -65,6 +115,11 @@ export class OneShotSynch implements INodeType {
 				type: 'collection',
 				placeholder: 'Add Field',
 				default: {},
+				displayOptions: {
+					show: {
+						operation: ['execute'],
+					},
+				},
 				options: [
 					{
 						displayName: 'Wallet ID',
@@ -78,14 +133,8 @@ export class OneShotSynch implements INodeType {
 						name: 'memo',
 						type: 'string',
 						default: '',
-						description: 'Optional text to include with the Transaction after the Contract Method is executed',
-					},
-					{
-						displayName: 'Authorization List',
-						name: 'authorizationList',
-						type: 'json',
-						default: '[]',
-						description: 'List of ERC-7702 authorizations for the Contract Method',
+						description:
+							'Optional text to include with the Transaction after the Contract Method is executed',
 					},
 				],
 			},
@@ -104,17 +153,24 @@ export class OneShotSynch implements INodeType {
 		const errorData = [];
 
 		for (let i = 0; i < items.length; i++) {
-			const response = await executeAndWaitContractMethodOperation(this, i);
-			if (response.success) {
-				returnData.push({ ...response.result } as IDataObject);
-			} else {
-				errorData.push({ ...response.result } as IDataObject);
+			const operation = this.getNodeParameter('operation', i) as string;
+			if (operation === 'execute') {
+				const response = await executeAndWaitContractMethodOperation(this, i);
+				if (response.success) {
+					returnData.push({ ...response.result } as IDataObject);
+				} else {
+					errorData.push({ ...response.result } as IDataObject);
+				}
+			} else if (operation === 'executeAsDelegator') {
+				const response = await executeAsDelegatorAndWaitContractMethodOperation(this, i);
+				if (response.success) {
+					returnData.push({ ...response.result } as IDataObject);
+				} else {
+					errorData.push({ ...response.result } as IDataObject);
+				}
 			}
 		}
 
-		return [
-			this.helpers.returnJsonArray(returnData),
-			this.helpers.returnJsonArray(errorData),
-		];
+		return [this.helpers.returnJsonArray(returnData), this.helpers.returnJsonArray(errorData)];
 	}
 }
