@@ -6,10 +6,6 @@ export async function webhookTrigger(this: IWebhookFunctions): Promise<IWebhookR
 	const body = this.getBodyData();
 	const signature = body.signature as string;
 
-	console.log(`Received webhook with signature: ${signature}`);
-	console.log(`Received webhook with body: `, body);
-	console.log(`Received webhook with publicKey: ${publicKey}`);
-
 	if (!signature) {
 		throw new Error('No signature provided in webhook payload');
 	}
@@ -57,7 +53,6 @@ async function verify1ShotSignature(
 		// Sort all object keys recursively and create a canonical JSON string
 		const sortedData = sortObjectKeys(payload);
 		const message = JSON.stringify(sortedData);
-		console.log(`CHARLIE: Message: ${message}`);
 
 		// Convert the message to UTF-8 bytes
 		const messageBytes = new TextEncoder().encode(message);
