@@ -1,4 +1,4 @@
-import { IExecuteFunctions, ILoadOptionsFunctions, NodeOperationError } from 'n8n-workflow';
+import { IExecuteFunctions, ILoadOptionsFunctions, NodeOperationError, sleep } from 'n8n-workflow';
 import {
 	EChain,
 	PagedResponse,
@@ -164,7 +164,7 @@ export async function executeAndWaitContractMethodOperation(
 	// Wait for transaction to complete
 	let status = 'Pending';
 	while (status != 'Completed' && status != 'Failed') {
-		await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds between checks
+		await sleep(2000); // Wait 2 seconds between checks
 		transaction = await getTransaction(context, transaction.id);
 		status = transaction.status;
 	}
@@ -207,7 +207,7 @@ export async function executeAsDelegatorAndWaitContractMethodOperation(
 	// Wait for transaction to complete
 	let status = 'Pending';
 	while (status != 'Completed' && status != 'Failed') {
-		await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds between checks
+		await sleep(2000); // Wait 2 seconds between checks
 		transaction = await getTransaction(context, transaction.id);
 		status = transaction.status;
 	}
