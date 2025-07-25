@@ -1,4 +1,4 @@
-[![Watch the tutorial](https://img.youtube.com/vi/RYfPKSb6GFY/maxresdefault.jpg)](https://youtu.be/RYfPKSb6GFY)
+[![Watch the tutorial](https://img.youtube.com/vi/WLkwqC4B2r4/maxresdefault.jpg)](https://youtu.be/WLkwqC4B2r4)
 
 # n8n-nodes-1shot
 
@@ -63,8 +63,14 @@ Try out the [x402 workflow](/x402.json) to see how 1Shot API can simulate and ex
 # example curl call to your n8n webhook endpoint
 # be sure to change the URL to your n8n webhook url and set a proper x-payment header
 curl -X GET \
+  https://hook.us2.make.com/5qimwe147tq9ew7k9bwarnb3rtr6hi3g \
+  -H "x-payment: eyJ4NDAyVmVyc2lvbiI6MSwic2NoZW1lIjoiZXhhY3QiLCJuZXR3b3JrIjoiYmFzZS1zZXBvbGlhIiwicGF5bG9hZCI6eyJzaWduYXR1cmUiOiIweDE0ZjNkNGUyODNlMTgyNTdiMTBlMTkyNzRlNzgyZTU0YTQyOWExZDkzZDgzYTczYjY5YTAyOTYxY2IyNDYzOTI1ODU0M2Y3NjhmYTQyMzVkNTQzYzM2MWQ4ZGRhNTE2MzdjMWE3OWY1MTY0YTkyYTRhZGYxZDE4ZTBhYjQ4YzQyMWIiLCJhdXRob3JpemF0aW9uIjp7ImZyb20iOiIweDU1NjgwYzZiNjlkNTk4YzBiNDJmOTNjZDUzZGZmM2QyMGUwNjliNWIiLCJ0byI6IjB4RTkzNmU4RkFmNEE1NjU1NDY5MTgyQTQ5YTUwNTA1NUI3MUMxNzYwNCIsInZhbHVlIjoiNTAwMDAiLCJ2YWxpZEFmdGVyIjoiMTc1MTU3NDI2MiIsInZhbGlkQmVmb3JlIjoiMTc1MTU3NDM4MiIsIm5vbmNlIjoiMHg4NDA5NmMwODBkNDg5NTg1MmRiNGRkZGVmN2Q3NmM1MzM4OWVmZjE4YWIwMTk0MGJhY2EwYmRhYmQ4OTRhZmYxIn19fQ==" \
+  -H "User-Agent: CustomUserAgent/1.0" \
+  -H "Accept: application/json"
+
+curl -X GET \
   https://n8n.1shotapi.dev/webhook-test/92c5ca23-99a7-437d-85da-84aef8bd2a25 \
-  -H "x-payment: YOUR-BASE64-ENCODED-PAYMENT-PAYLOAD" \
+  -H "x-payment: eyJ4NDAyVmVyc2lvbiI6MSwic2NoZW1lIjoiZXhhY3QiLCJuZXR3b3JrIjoiYmFzZS1zZXBvbGlhIiwicGF5bG9hZCI6eyJzaWduYXR1cmUiOiIweDE0ZjNkNGUyODNlMTgyNTdiMTBlMTkyNzRlNzgyZTU0YTQyOWExZDkzZDgzYTczYjY5YTAyOTYxY2IyNDYzOTI1ODU0M2Y3NjhmYTQyMzVkNTQzYzM2MWQ4ZGRhNTE2MzdjMWE3OWY1MTY0YTkyYTRhZGYxZDE4ZTBhYjQ4YzQyMWIiLCJhdXRob3JpemF0aW9uIjp7ImZyb20iOiIweDU1NjgwYzZiNjlkNTk4YzBiNDJmOTNjZDUzZGZmM2QyMGUwNjliNWIiLCJ0byI6IjB4RTkzNmU4RkFmNEE1NjU1NDY5MTgyQTQ5YTUwNTA1NUI3MUMxNzYwNCIsInZhbHVlIjoiNTAwMDAiLCJ2YWxpZEFmdGVyIjoiMTc1MTU3NDI2MiIsInZhbGlkQmVmb3JlIjoiMTc1MTU3NDM4MiIsIm5vbmNlIjoiMHg4NDA5NmMwODBkNDg5NTg1MmRiNGRkZGVmN2Q3NmM1MzM4OWVmZjE4YWIwMTk0MGJhY2EwYmRhYmQ4OTRhZmYxIn19fQ==" \
   -H "User-Agent: CustomUserAgent/1.0" \
   -H "Accept: application/json"
 ```
