@@ -1,6 +1,16 @@
-import { IExecuteFunctions, ILoadOptionsFunctions, NodeOperationError } from "n8n-workflow";
-import { EChain, PagedResponse, ContractMethod, ContractMethodTestResult, ContractMethodEstimate, Transaction, JSONValue, ERC7702Authorization } from '../types/1shot';
-import { additionalCredentialOptions, oneshotApiBaseUrl } from "../types/constants";
+import { IExecuteFunctions, ILoadOptionsFunctions, NodeOperationError, sleep } from 'n8n-workflow';
+import {
+	EChain,
+	PagedResponse,
+	ContractMethod,
+	ContractMethodTestResult,
+	ContractMethodEstimate,
+	Transaction,
+	JSONValue,
+	ERC7702Authorization,
+	EncodeContractMethodResult,
+} from '../types/1shot';
+import { additionalCredentialOptions, oneshotApiBaseUrl } from '../types/constants';
 import { getTransaction } from './Transactions';
 
 export async function listContractMethodsOperation(context: IExecuteFunctions, index: number) {
@@ -46,7 +56,10 @@ export async function simulateContractMethodOperation(context: IExecuteFunctions
 	return await simulateContractMethod(context, contractMethodId, parsedParams);
 }
 
-export async function assureContractMethodsFromPromptOperation(context: IExecuteFunctions, index: number) {
+export async function assureContractMethodsFromPromptOperation(
+	context: IExecuteFunctions,
+	index: number,
+) {
 	const chainId = context.getNodeParameter('chainId', index) as EChain;
 	const contractAddress = context.getNodeParameter('contractAddress', index) as string;
 	const walletId = context.getNodeParameter('walletId', index) as string;
@@ -70,16 +83,60 @@ export async function executeContractMethodOperation(context: IExecuteFunctions,
 		memo?: string;
 		walletId?: string;
 		authorizationList?: string;
+		value?: string;
 	};
 	const memo = additionalFields.memo;
 	const walletId = additionalFields.walletId;
+	const value = additionalFields.value;
 	// const authorizationList = this.getNodeParameter('authorizationList', i) as string;
 	// const parsedAuthorizationList = authorizationList != "" ? JSON.parse(authorizationList) : undefined;
 
-	return await executeContractMethod(context, contractMethodId, parsedParams, walletId, memo);
+	return await executeContractMethod(
+		context,
+		contractMethodId,
+		parsedParams,
+		walletId,
+		memo,
+		undefined,
+		value,
+	);
 }
 
-export async function executeAndWaitContractMethodOperation(context: IExecuteFunctions, index: number): Promise<{ success: boolean, result: Transaction }> {
+export async function executeAsDelegatorContractMethodOperation(
+	context: IExecuteFunctions,
+	index: number,
+) {
+	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
+	const paramsString = context.getNodeParameter('params', index) as string;
+	const delegatorAddress = context.getNodeParameter('delegatorWalletAddress', index) as string;
+	const parsedParams = JSON.parse(paramsString);
+
+	const additionalFields = context.getNodeParameter('additionalFields', index) as {
+		memo?: string;
+		walletId?: string;
+		value?: string;
+	};
+	const memo = additionalFields.memo;
+	const walletId = additionalFields.walletId;
+	const value = additionalFields.value;
+	// const authorizationList = this.getNodeParameter('authorizationList', i) as string;
+	// const parsedAuthorizationList = authorizationList != "" ? JSON.parse(authorizationList) : undefined;
+
+	return await executeContractMethodAsDelegator(
+		context,
+		contractMethodId,
+		parsedParams,
+		delegatorAddress,
+		walletId,
+		memo,
+		value,
+	);
+}
+
+export async function executeAndWaitContractMethodOperation(
+	context: IExecuteFunctions,
+	index: number,
+): Promise<{ success: boolean; result: Transaction }> {
 	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
 	const paramsString = context.getNodeParameter('params', index) as string;
 	const parsedParams = JSON.parse(paramsString);
@@ -88,18 +145,28 @@ export async function executeAndWaitContractMethodOperation(context: IExecuteFun
 		memo?: string;
 		walletId?: string;
 		authorizationList?: string;
+		value?: string;
 	};
 	const memo = additionalFields.memo;
 	const walletId = additionalFields.walletId;
+	const value = additionalFields.value;
 
-	let transaction = await executeContractMethod(context, contractMethodId, parsedParams, walletId, memo);
-	
+	let transaction = await executeContractMethod(
+		context,
+		contractMethodId,
+		parsedParams,
+		walletId,
+		memo,
+		undefined,
+		value,
+	);
+
 	// Wait for transaction to complete
 	let status = 'Pending';
 	while (status != 'Completed' && status != 'Failed') {
-		await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds between checks
+		await sleep(2000); // Wait 2 seconds between checks
 		transaction = await getTransaction(context, transaction.id);
-		status = transaction.status;	
+		status = transaction.status;
 	}
 
 	if (status === 'Failed') {
@@ -107,6 +174,65 @@ export async function executeAndWaitContractMethodOperation(context: IExecuteFun
 	}
 
 	return { success: true, result: transaction };
+}
+
+export async function executeAsDelegatorAndWaitContractMethodOperation(
+	context: IExecuteFunctions,
+	index: number,
+): Promise<{ success: boolean; result: Transaction }> {
+	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
+	const paramsString = context.getNodeParameter('params', index) as string;
+	const delegatorAddress = context.getNodeParameter('delegatorWalletAddress', index) as string;
+	const parsedParams = JSON.parse(paramsString);
+
+	const additionalFields = context.getNodeParameter('additionalFields', index) as {
+		memo?: string;
+		walletId?: string;
+		value?: string;
+	};
+	const memo = additionalFields.memo;
+	const walletId = additionalFields.walletId;
+	const value = additionalFields.value;
+
+	let transaction = await executeContractMethodAsDelegator(
+		context,
+		contractMethodId,
+		parsedParams,
+		delegatorAddress,
+		walletId,
+		memo,
+		value,
+	);
+
+	// Wait for transaction to complete
+	let status = 'Pending';
+	while (status != 'Completed' && status != 'Failed') {
+		await sleep(2000); // Wait 2 seconds between checks
+		transaction = await getTransaction(context, transaction.id);
+		status = transaction.status;
+	}
+
+	if (status === 'Failed') {
+		return { success: false, result: transaction };
+	}
+
+	return { success: true, result: transaction };
+}
+
+export async function encodeContractMethodOperation(context: IExecuteFunctions, index: number) {
+	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
+	const paramsString = context.getNodeParameter('params', index) as string;
+	const parsedParams = JSON.parse(paramsString);
+
+	const additionalFields = context.getNodeParameter('additionalFields', index) as {
+		authorizationList?: string;
+		value?: string;
+	};
+	const value = additionalFields.value;
+	// const authorizationList = this.getNodeParameter('authorizationList', i) as string;
+	// const parsedAuthorizationList = authorizationList != "" ? JSON.parse(authorizationList) : undefined;
+
+	return await encodeContractMethod(context, contractMethodId, parsedParams, value);
 }
 
 export async function readContractMethodOperation(context: IExecuteFunctions, index: number) {
@@ -119,13 +245,13 @@ export async function readContractMethodOperation(context: IExecuteFunctions, in
 
 export async function listContractMethods(
 	context: ILoadOptionsFunctions | IExecuteFunctions,
-    chainId?: EChain,
-    page?: number,
-    pageSize?: number,
-    name?: string,
-    status?: 'live' | 'archived' | 'both',
-    contractAddress?: string,
-    promptId?: string,
+	chainId?: EChain,
+	page?: number,
+	pageSize?: number,
+	name?: string,
+	status?: 'live' | 'archived' | 'both',
+	contractAddress?: string,
+	promptId?: string,
 	methodType?: 'read' | 'write',
 ): Promise<PagedResponse<ContractMethod>> {
 	try {
@@ -133,37 +259,35 @@ export async function listContractMethods(
 		const businessId = credentials.businessId as string;
 
 		if (!businessId) {
-			throw new NodeOperationError(
-				context.getNode(),
-				'Business ID is required in credentials',
-			);
+			throw new NodeOperationError(context.getNode(), 'Business ID is required in credentials');
 		}
 
-		const response: PagedResponse<ContractMethod> = await context.helpers.requestWithAuthentication.call(
-			context,
-			'oneShotOAuth2Api',
-			{
-				method: 'GET',
-				url: `/business/${businessId}/methods`,
-				qs: {
-					pageSize: pageSize ?? 25,
-					page: page ?? 1,
-					chainId,
-					name,
-					status,
-					contractAddress,
-					promptId,
-					methodType,
+		const response: PagedResponse<ContractMethod> =
+			await context.helpers.requestWithAuthentication.call(
+				context,
+				'oneShotOAuth2Api',
+				{
+					method: 'GET',
+					url: `/business/${businessId}/methods`,
+					qs: {
+						pageSize: pageSize ?? 25,
+						page: page ?? 1,
+						chainId,
+						name,
+						status,
+						contractAddress,
+						promptId,
+						methodType,
+					},
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					json: true,
+					baseURL: oneshotApiBaseUrl,
 				},
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				json: true,
-				baseURL: oneshotApiBaseUrl,
-			},
-			additionalCredentialOptions,
-		);
+				additionalCredentialOptions,
+			);
 
 		return response;
 	} catch (error) {
@@ -191,10 +315,7 @@ export async function createContractMethod(
 		const businessId = credentials.businessId as string;
 
 		if (!businessId) {
-			throw new NodeOperationError(
-				context.getNode(),
-				'Business ID is required in credentials',
-			);
+			throw new NodeOperationError(context.getNode(), 'Business ID is required in credentials');
 		}
 
 		const response: ContractMethod = await context.helpers.requestWithAuthentication.call(
@@ -247,10 +368,7 @@ export async function createContractMethodsFromAbi(
 		const businessId = credentials.businessId as string;
 
 		if (!businessId) {
-			throw new NodeOperationError(
-				context.getNode(),
-				'Business ID is required in credentials',
-			);
+			throw new NodeOperationError(context.getNode(), 'Business ID is required in credentials');
 		}
 
 		const response: ContractMethod[] = await context.helpers.requestWithAuthentication.call(
@@ -297,10 +415,7 @@ export async function assureContractMethodsFromPrompt(
 		const businessId = credentials.businessId as string;
 
 		if (!businessId) {
-			throw new NodeOperationError(
-				context.getNode(),
-				'Business ID is required in credentials',
-			);
+			throw new NodeOperationError(context.getNode(), 'Business ID is required in credentials');
 		}
 
 		const response: ContractMethod[] = await context.helpers.requestWithAuthentication.call(
@@ -503,6 +618,7 @@ export async function executeContractMethod(
 	walletId?: string,
 	memo?: string,
 	authorizationList?: ERC7702Authorization[],
+	value?: string,
 ): Promise<Transaction> {
 	try {
 		const response: Transaction = await context.helpers.requestWithAuthentication.call(
@@ -516,6 +632,7 @@ export async function executeContractMethod(
 					walletId,
 					memo,
 					authorizationList,
+					value,
 				},
 				headers: {
 					Accept: 'application/json',
@@ -530,6 +647,78 @@ export async function executeContractMethod(
 		return response;
 	} catch (error) {
 		context.logger.error(`Error executing Contract Method ${error.message}`, { error });
+		throw error;
+	}
+}
+
+export async function executeContractMethodAsDelegator(
+	context: IExecuteFunctions,
+	contractMethodId: string,
+	params: JSONValue,
+	delegatorAddress: string,
+	walletId?: string,
+	memo?: string,
+	value?: string,
+): Promise<Transaction> {
+	try {
+		const response: Transaction = await context.helpers.requestWithAuthentication.call(
+			context,
+			'oneShotOAuth2Api',
+			{
+				method: 'POST',
+				url: `/methods/${contractMethodId}/executeAsDelegator`,
+				body: {
+					params,
+					delegatorAddress,
+					walletId,
+					memo,
+					value,
+				},
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				json: true,
+				baseURL: oneshotApiBaseUrl,
+			},
+			additionalCredentialOptions,
+		);
+
+		return response;
+	} catch (error) {
+		context.logger.error(`Error executing Contract Method ${error.message}`, { error });
+		throw error;
+	}
+}
+
+export async function encodeContractMethod(
+	context: IExecuteFunctions,
+	contractMethodId: string,
+	params: JSONValue,
+	value?: string,
+): Promise<EncodeContractMethodResult> {
+	try {
+		const response: EncodeContractMethodResult =
+			await context.helpers.requestWithAuthentication.call(
+				context,
+				'oneShotOAuth2Api',
+				{
+					method: 'POST',
+					url: `/methods/${contractMethodId}/encode`,
+					body: { params, value },
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					json: true,
+					baseURL: oneshotApiBaseUrl,
+				},
+				additionalCredentialOptions,
+			);
+
+		return response;
+	} catch (error) {
+		context.logger.error(`Error encoding Contract Method ${error.message}`, { error });
 		throw error;
 	}
 }

@@ -1,4 +1,9 @@
-import { IExecuteFunctions, ILoadOptionsFunctions, INodePropertyOptions, NodeOperationError } from 'n8n-workflow';
+import {
+	IExecuteFunctions,
+	ILoadOptionsFunctions,
+	INodePropertyOptions,
+	NodeOperationError,
+} from 'n8n-workflow';
 import { EChain, PagedResponse, Wallet } from '../types/1shot';
 import { additionalCredentialOptions, oneshotApiBaseUrl } from '../types/constants';
 
@@ -22,22 +27,13 @@ export async function createWalletOperation(context: IExecuteFunctions, index: n
 	const name = context.getNodeParameter('name', index) as string;
 	const description = context.getNodeParameter('description', index) as string;
 
-	return await createWallet(
-		context,
-		chainId,
-		name,
-		description || undefined,
-	);
+	return await createWallet(context, chainId, name, description || undefined);
 }
 
 export async function getWalletOperation(context: IExecuteFunctions, index: number) {
 	const walletId = context.getNodeParameter('walletId', index) as string;
-	
-	return await getWallet(
-		context,
-		walletId,
-		true,
-	);
+
+	return await getWallet(context, walletId, true);
 }
 
 export async function updateWalletOperation(context: IExecuteFunctions, index: number) {
@@ -45,12 +41,7 @@ export async function updateWalletOperation(context: IExecuteFunctions, index: n
 	const name = context.getNodeParameter('name', index) as string;
 	const description = context.getNodeParameter('description', index) as string;
 
-	return await updateWallet(
-		context,
-		walletId,
-		name || undefined,
-		description || undefined,
-	);
+	return await updateWallet(context, walletId, name || undefined, description || undefined);
 }
 
 export async function deleteWalletOperation(context: IExecuteFunctions, index: number) {
@@ -63,25 +54,24 @@ export async function loadWalletOptions(
 ): Promise<INodePropertyOptions[]> {
 	const response = await listWallets(this, undefined, 1, 1000, undefined);
 
-    const options: INodePropertyOptions[] = [];
-    for (const wallet of response.response) {
-        options.push({
-            name: wallet.name,
-            value: wallet.id,
-            description: wallet.description,
-        });
-    }
+	const options: INodePropertyOptions[] = [];
+	for (const wallet of response.response) {
+		options.push({
+			name: wallet.name,
+			value: wallet.id,
+			description: wallet.description,
+		});
+	}
 
-    return options;
+	return options;
 }
-
 
 export async function listWallets(
 	context: ILoadOptionsFunctions | IExecuteFunctions,
-    chainId?: EChain,
-    page?: number,
-    pageSize?: number,
-    name?: string,
+	chainId?: EChain,
+	page?: number,
+	pageSize?: number,
+	name?: string,
 ): Promise<PagedResponse<Wallet>> {
 	try {
 		// Get the credentials to access businessId
@@ -89,10 +79,7 @@ export async function listWallets(
 		const businessId = credentials.businessId as string;
 
 		if (!businessId) {
-			throw new NodeOperationError(
-				context.getNode(),
-				'Business ID is required in credentials',
-			);
+			throw new NodeOperationError(context.getNode(), 'Business ID is required in credentials');
 		}
 
 		const response: PagedResponse<Wallet> = await context.helpers.requestWithAuthentication.call(
@@ -117,8 +104,7 @@ export async function listWallets(
 			additionalCredentialOptions,
 		);
 
-        return response;
-
+		return response;
 	} catch (error) {
 		context.logger.error(`Error loading wallets ${error.message}`, { error });
 	}
@@ -137,10 +123,7 @@ export async function createWallet(
 		const businessId = credentials.businessId as string;
 
 		if (!businessId) {
-			throw new NodeOperationError(
-				context.getNode(),
-				'Business ID is required in credentials',
-			);
+			throw new NodeOperationError(context.getNode(), 'Business ID is required in credentials');
 		}
 
 		const response: Wallet = await context.helpers.requestWithAuthentication.call(

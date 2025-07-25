@@ -2,21 +2,20 @@ import { IExecuteFunctions, ILoadOptionsFunctions } from 'n8n-workflow';
 import { ChainInfo, PagedResponse } from '../types/1shot';
 import { additionalCredentialOptions, oneshotApiBaseUrl } from '../types/constants';
 
-export async function listChainsOperation(context: IExecuteFunctions, index: number): Promise<PagedResponse<ChainInfo>> {
+export async function listChainsOperation(
+	context: IExecuteFunctions,
+	index: number,
+): Promise<PagedResponse<ChainInfo>> {
 	const page = context.getNodeParameter('page', index) as number;
 	const pageSize = context.getNodeParameter('pageSize', index) as number;
 
-	return await listChains(
-		context,
-		page, 
-		pageSize,
-	);
+	return await listChains(context, page, pageSize);
 }
 
 export async function listChains(
 	context: ILoadOptionsFunctions | IExecuteFunctions,
-    page?: number,
-    pageSize?: number,
+	page?: number,
+	pageSize?: number,
 ): Promise<PagedResponse<ChainInfo>> {
 	try {
 		const response: PagedResponse<ChainInfo> = await context.helpers.requestWithAuthentication.call(
