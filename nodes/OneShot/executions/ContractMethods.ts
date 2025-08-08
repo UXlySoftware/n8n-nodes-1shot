@@ -580,8 +580,8 @@ export async function simulateContractMethod(
 				url: `/methods/${contractMethodId}/test`,
 				body: {
 					params,
-					gasLimit
-				 },
+					gasLimit,
+				},
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',

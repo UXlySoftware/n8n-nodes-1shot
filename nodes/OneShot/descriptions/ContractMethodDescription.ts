@@ -182,7 +182,8 @@ const contractMethodFields: INodeProperties[] = [
 				name: 'gasLimit',
 				type: 'string',
 				default: '',
-				description: 'The gas limit to use for the Contract Method. The higher of either this value or the estimated gas will be used.',
+				description:
+					'The gas limit to use for the Contract Method. The higher of either this value or the estimated gas will be used.',
 			},
 		],
 	},
@@ -219,7 +220,8 @@ const contractMethodFields: INodeProperties[] = [
 				name: 'gasLimit',
 				type: 'string',
 				default: '',
-				description: 'The gas limit to use for the Contract Method. The higher of either this value or the estimated gas will be used.',
+				description:
+					'The gas limit to use for the Contract Method. The higher of either this value or the estimated gas will be used.',
 			},
 		],
 	},
@@ -384,7 +386,8 @@ const contractMethodFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'The gas limit to use for the Contract Method. If not provided, the default gas limit will be used.',
+		description:
+			'The gas limit to use for the Contract Method. If not provided, the default gas limit will be used.',
 	},
 	{
 		displayName: 'Page Number',
