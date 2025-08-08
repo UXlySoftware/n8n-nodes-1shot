@@ -177,6 +177,13 @@ const contractMethodFields: INodeProperties[] = [
 				default: '[]',
 				description: 'List of ERC-7702 authorizations for the Contract Method',
 			},
+			{
+				displayName: 'Gas Limit',
+				name: 'gasLimit',
+				type: 'string',
+				default: '',
+				description: 'The gas limit to use for the Contract Method. The higher of either this value or the estimated gas will be used.',
+			},
 		],
 	},
 	{
@@ -206,6 +213,13 @@ const contractMethodFields: INodeProperties[] = [
 				default: '',
 				description:
 					'Optional text to include with the Transaction after the Contract Method is executed',
+			},
+			{
+				displayName: 'Gas Limit',
+				name: 'gasLimit',
+				type: 'string',
+				default: '',
+				description: 'The gas limit to use for the Contract Method. The higher of either this value or the estimated gas will be used.',
 			},
 		],
 	},
@@ -358,6 +372,19 @@ const contractMethodFields: INodeProperties[] = [
 		default: '',
 		description:
 			'Select the Wallet to use for the contract methods. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+	},
+	{
+		displayName: 'Gas Limit',
+		name: 'gasLimit',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['simulate'],
+			},
+		},
+		default: '',
+		description: 'The gas limit to use for the Contract Method. If not provided, the default gas limit will be used.',
 	},
 	{
 		displayName: 'Page Number',
