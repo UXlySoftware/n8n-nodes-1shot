@@ -82,4 +82,4 @@ curl -X GET \
 
 ## Version history
 
-latest version: `1.0.9`
+latest version: `1.0.10`
