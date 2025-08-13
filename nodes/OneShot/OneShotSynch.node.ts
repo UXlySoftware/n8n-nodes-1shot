@@ -117,7 +117,7 @@ export class OneShotSynch implements INodeType {
 				default: {},
 				displayOptions: {
 					show: {
-						operation: ['execute'],
+						operation: ['execute', 'executeAsDelegator'],
 					},
 				},
 				options: [
@@ -135,6 +135,14 @@ export class OneShotSynch implements INodeType {
 						default: '',
 						description:
 							'Optional text to include with the Transaction after the Contract Method is executed',
+					},
+					{
+						displayName: 'Gas Limit',
+						name: 'gasLimit',
+						type: 'string',
+						default: '',
+						description:
+							'The gas limit to use for the Contract Method. If not provided, the default gas limit will be used.',
 					},
 				],
 			},

@@ -151,7 +151,7 @@ const contractMethodFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['contractMethods'],
-				operation: ['execute', 'executeAsDelegator', 'encode'],
+				operation: ['execute'],
 			},
 		},
 		options: [
@@ -161,12 +161,6 @@ const contractMethodFields: INodeProperties[] = [
 				type: 'string',
 				default: '',
 				description: 'The ID of the Wallet to use for this Contract Method',
-				displayOptions: {
-					show: {
-						resource: ['contractMethods'],
-						operation: ['execute', 'executeAsDelegator'],
-					},
-				},
 			},
 			{
 				displayName: 'Memo',
@@ -175,12 +169,6 @@ const contractMethodFields: INodeProperties[] = [
 				default: '',
 				description:
 					'Optional text to include with the Transaction after the Contract Method is executed',
-				displayOptions: {
-					show: {
-						resource: ['contractMethods'],
-						operation: ['execute', 'executeAsDelegator'],
-					},
-				},
 			},
 			{
 				displayName: 'Authorization List',
@@ -188,12 +176,74 @@ const contractMethodFields: INodeProperties[] = [
 				type: 'json',
 				default: '[]',
 				description: 'List of ERC-7702 authorizations for the Contract Method',
-				displayOptions: {
-					show: {
-						resource: ['contractMethods'],
-						operation: ['execute', 'encode'],
-					},
-				},
+			},
+			{
+				displayName: 'Gas Limit',
+				name: 'gasLimit',
+				type: 'string',
+				default: '',
+				description:
+					'The gas limit to use for the Contract Method. The higher of either this value or the estimated gas will be used.',
+			},
+		],
+	},
+	{
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['executeAsDelegator'],
+			},
+		},
+		options: [
+			{
+				displayName: 'Wallet ID',
+				name: 'walletId',
+				type: 'string',
+				default: '',
+				description: 'The ID of the Wallet to use for this Contract Method',
+			},
+			{
+				displayName: 'Memo',
+				name: 'memo',
+				type: 'string',
+				default: '',
+				description:
+					'Optional text to include with the Transaction after the Contract Method is executed',
+			},
+			{
+				displayName: 'Gas Limit',
+				name: 'gasLimit',
+				type: 'string',
+				default: '',
+				description:
+					'The gas limit to use for the Contract Method. The higher of either this value or the estimated gas will be used.',
+			},
+		],
+	},
+	{
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['encode'],
+			},
+		},
+		options: [
+			{
+				displayName: 'Authorization List',
+				name: 'authorizationList',
+				type: 'json',
+				default: '[]',
+				description: 'List of ERC-7702 authorizations for the Contract Method',
 			},
 		],
 	},
@@ -324,6 +374,20 @@ const contractMethodFields: INodeProperties[] = [
 		default: '',
 		description:
 			'Select the Wallet to use for the contract methods. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+	},
+	{
+		displayName: 'Gas Limit',
+		name: 'gasLimit',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['contractMethods'],
+				operation: ['simulate'],
+			},
+		},
+		default: '',
+		description:
+			'The gas limit to use for the Contract Method. If not provided, the default gas limit will be used.',
 	},
 	{
 		displayName: 'Page Number',

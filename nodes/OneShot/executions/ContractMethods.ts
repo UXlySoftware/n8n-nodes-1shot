@@ -52,8 +52,9 @@ export async function simulateContractMethodOperation(context: IExecuteFunctions
 	const contractMethodId = context.getNodeParameter('contractMethodId', index) as string;
 	const paramsString = context.getNodeParameter('params', index) as string;
 	const parsedParams = JSON.parse(paramsString);
+	const gasLimit = context.getNodeParameter('gasLimit', index) as string | undefined;
 
-	return await simulateContractMethod(context, contractMethodId, parsedParams);
+	return await simulateContractMethod(context, contractMethodId, parsedParams, gasLimit);
 }
 
 export async function assureContractMethodsFromPromptOperation(
@@ -84,10 +85,12 @@ export async function executeContractMethodOperation(context: IExecuteFunctions,
 		walletId?: string;
 		authorizationList?: string;
 		value?: string;
+		gasLimit?: string;
 	};
 	const memo = additionalFields.memo;
 	const walletId = additionalFields.walletId;
 	const value = additionalFields.value;
+	const gasLimit = additionalFields.gasLimit;
 	// const authorizationList = this.getNodeParameter('authorizationList', i) as string;
 	// const parsedAuthorizationList = authorizationList != "" ? JSON.parse(authorizationList) : undefined;
 
@@ -99,6 +102,7 @@ export async function executeContractMethodOperation(context: IExecuteFunctions,
 		memo,
 		undefined,
 		value,
+		gasLimit,
 	);
 }
 
@@ -115,10 +119,12 @@ export async function executeAsDelegatorContractMethodOperation(
 		memo?: string;
 		walletId?: string;
 		value?: string;
+		gasLimit?: string;
 	};
 	const memo = additionalFields.memo;
 	const walletId = additionalFields.walletId;
 	const value = additionalFields.value;
+	const gasLimit = additionalFields.gasLimit;
 	// const authorizationList = this.getNodeParameter('authorizationList', i) as string;
 	// const parsedAuthorizationList = authorizationList != "" ? JSON.parse(authorizationList) : undefined;
 
@@ -130,6 +136,7 @@ export async function executeAsDelegatorContractMethodOperation(
 		walletId,
 		memo,
 		value,
+		gasLimit,
 	);
 }
 
@@ -146,10 +153,13 @@ export async function executeAndWaitContractMethodOperation(
 		walletId?: string;
 		authorizationList?: string;
 		value?: string;
+		gasLimit?: string;
 	};
+
 	const memo = additionalFields.memo;
 	const walletId = additionalFields.walletId;
 	const value = additionalFields.value;
+	const gasLimit = additionalFields.gasLimit;
 
 	let transaction = await executeContractMethod(
 		context,
@@ -159,14 +169,17 @@ export async function executeAndWaitContractMethodOperation(
 		memo,
 		undefined,
 		value,
+		gasLimit,
 	);
 
 	// Wait for transaction to complete
 	let status = 'Pending';
-	while (status != 'Completed' && status != 'Failed') {
+	let attempts = 0;
+	while (status != 'Completed' && status != 'Failed' && attempts < 20) {
 		await sleep(2000); // Wait 2 seconds between checks
 		transaction = await getTransaction(context, transaction.id);
 		status = transaction.status;
+		attempts++;
 	}
 
 	if (status === 'Failed') {
@@ -189,10 +202,12 @@ export async function executeAsDelegatorAndWaitContractMethodOperation(
 		memo?: string;
 		walletId?: string;
 		value?: string;
+		gasLimit?: string;
 	};
 	const memo = additionalFields.memo;
 	const walletId = additionalFields.walletId;
 	const value = additionalFields.value;
+	const gasLimit = additionalFields.gasLimit;
 
 	let transaction = await executeContractMethodAsDelegator(
 		context,
@@ -202,6 +217,7 @@ export async function executeAsDelegatorAndWaitContractMethodOperation(
 		walletId,
 		memo,
 		value,
+		gasLimit,
 	);
 
 	// Wait for transaction to complete
@@ -553,6 +569,7 @@ export async function simulateContractMethod(
 	context: IExecuteFunctions,
 	contractMethodId: string,
 	params: JSONValue,
+	gasLimit?: string,
 ): Promise<ContractMethodTestResult> {
 	try {
 		const response: ContractMethodTestResult = await context.helpers.requestWithAuthentication.call(
@@ -561,7 +578,10 @@ export async function simulateContractMethod(
 			{
 				method: 'POST',
 				url: `/methods/${contractMethodId}/test`,
-				body: { params },
+				body: {
+					params,
+					gasLimit,
+				},
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
@@ -619,6 +639,7 @@ export async function executeContractMethod(
 	memo?: string,
 	authorizationList?: ERC7702Authorization[],
 	value?: string,
+	gasLimit?: string,
 ): Promise<Transaction> {
 	try {
 		const response: Transaction = await context.helpers.requestWithAuthentication.call(
@@ -633,6 +654,7 @@ export async function executeContractMethod(
 					memo,
 					authorizationList,
 					value,
+					gasLimit,
 				},
 				headers: {
 					Accept: 'application/json',
@@ -659,6 +681,7 @@ export async function executeContractMethodAsDelegator(
 	walletId?: string,
 	memo?: string,
 	value?: string,
+	gasLimit?: string,
 ): Promise<Transaction> {
 	try {
 		const response: Transaction = await context.helpers.requestWithAuthentication.call(
@@ -673,6 +696,7 @@ export async function executeContractMethodAsDelegator(
 					walletId,
 					memo,
 					value,
+					gasLimit,
 				},
 				headers: {
 					Accept: 'application/json',
