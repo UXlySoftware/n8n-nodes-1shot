@@ -6,7 +6,7 @@ import {
 } from 'n8n-workflow';
 import { verifyAsync } from '../crypto/ED25519';
 import { getX402Supported, settleX402Payment, verifyX402Payment } from './x402';
-import { IPaymentPayload, IPaymentRequirements, IX402ErrorResponse } from '../types/1shot';
+import { IPaymentPayload, IPaymentRequirements, IX402ErrorResponse, X402PaymentPayloadV1ExactEvm } from '../types/1shot';
 import { getX402RefundHeader, isIpWhitelisted, setupOutputConnection } from '../utils/webhookUtils';
 // import { rm, } from 'fs/promises';
 import type * as express from 'express';
@@ -266,7 +266,7 @@ async function handleX402Webhook(
 		const decodedXPayment = Buffer.from(xPaymentHeader, 'base64').toString('utf-8');
 
 		// Parse the decoded value into a JSON object
-		const decodedXPaymentJson = JSON.parse(decodedXPayment) as IPaymentPayload;
+		const decodedXPaymentJson = JSON.parse(decodedXPayment) as X402PaymentPayloadV1ExactEvm;
 
 		const validation = validateXPayment(decodedXPaymentJson);
 		if (validation != 'valid') {
@@ -568,7 +568,7 @@ function checkShape(
 // this function will ensure the x-payment header is for one of our supported
 // networks, is for the correct amount, and pays the right address
 function verifyPaymentDetails(
-	header: IPaymentPayload,
+	header: X402PaymentPayloadV1ExactEvm,
 	paymentRequirements: PaymentRequirements[],
 ): { valid: boolean; errors: string; paymentRequirements: PaymentRequirements | undefined } {
 	const errors = [];

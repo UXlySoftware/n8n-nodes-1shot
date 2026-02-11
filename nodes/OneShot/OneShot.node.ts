@@ -88,7 +88,12 @@ import { Readable } from 'stream';
 import { setNestedProperty } from './utils/lodashFunctions';
 import { setFilename } from './utils/binaryData';
 import { mimeTypeFromResponse } from './utils/parse';
-import { IEIP3009Authorization, IX402ErrorResponse } from './types/1shot';
+import {
+	IERC3009Authorization,
+	IX402ErrorResponse,
+	X402PaymentPayloadV1ExactEvm,
+	X402PaymentPayloadV2ExactEvm,
+} from './types/1shot';
 
 export class OneShot implements INodeType {
 	description: INodeTypeDescription = {
@@ -900,11 +905,10 @@ async function executeX402RequestOperation(
 						.then(async (response) => {
 							if (response.statusCode === 402) {
 								// Generate an x402 payment header
-								const paymentHeader = await generateX402PaymentHeader.call(this, response.body);
+							const { paymentHeader, headerKey } = await generateX402PaymentHeader.call(this, response.body, response.headers);
 
-								// Add the x-payment header
-								requestOptions.headers!['x-payment'] = paymentHeader;
-
+							// Add the x-payment header
+							requestOptions.headers![headerKey] = paymentHeader;
 								// Restore requestOptions.ignoreHttpStatusErrors
 								requestOptions.ignoreHttpStatusErrors = ignoreHttpStatusErrors;
 
@@ -925,11 +929,10 @@ async function executeX402RequestOperation(
 						.then(async (response) => {
 							if (response.statusCode === 402) {
 								// Generate an x402 payment header
-								const paymentHeader = await generateX402PaymentHeader.call(this, response.body);
+							const { paymentHeader, headerKey } = await generateX402PaymentHeader.call(this, response.body, response.headers);
 
-								// Add the x-payment header
-								requestOptions.headers!['x-payment'] = paymentHeader;
-
+							// Add the x-payment header
+							requestOptions.headers![headerKey] = paymentHeader;
 								// Restore requestOptions.ignoreHttpStatusErrors
 								requestOptions.ignoreHttpStatusErrors = ignoreHttpStatusErrors;
 
@@ -950,10 +953,12 @@ async function executeX402RequestOperation(
 					const request = this.helpers.httpRequest(requestOptions).then(async (response) => {
 						if (response.statusCode === 402) {
 							// Generate an x402 payment header
-							const paymentHeader = await generateX402PaymentHeader.call(this, response.body);
+							const { paymentHeader, headerKey } = await generateX402PaymentHeader.call(this, response.body, response.headers);
 
 							// Add the x-payment header
-							requestOptions.headers!['x-payment'] = paymentHeader;
+							requestOptions.headers![headerKey] = paymentHeader;
+
+							this.logger.debug(`headerKey: ${headerKey}, paymentHeader: ${paymentHeader}`);
 
 							// Restore requestOptions.ignoreHttpStatusErrors
 							requestOptions.ignoreHttpStatusErrors = ignoreHttpStatusErrors;
@@ -978,10 +983,10 @@ async function executeX402RequestOperation(
 					.then(async (response) => {
 						if (response.statusCode === 402) {
 							// Generate an x402 payment header
-							const paymentHeader = await generateX402PaymentHeader.call(this, response.body);
+							const { paymentHeader, headerKey } = await generateX402PaymentHeader.call(this, response.body, response.headers);
 
 							// Add the x-payment header
-							requestOptions.headers!['x-payment'] = paymentHeader;
+							requestOptions.headers![headerKey] = paymentHeader;
 
 							// Restore requestOptions.ignoreHttpStatusErrors
 							requestOptions.ignoreHttpStatusErrors = ignoreHttpStatusErrors;
@@ -1289,14 +1294,70 @@ async function executeX402RequestOperation(
 async function generateX402PaymentHeader(
 	this: IExecuteFunctions,
 	response: IX402ErrorResponse,
-): Promise<string> {
-	// We are going to just use the first payment config for now.
-	const paymentConfig = response.accepts[0];
+	headers: { [key: string]: string } = {},
+): Promise<{ paymentHeader: string, headerKey: string}> {
+	// The body should be a JSON object, but the headers should be a string.
+	// Look for the "payment-required" header- that will be a base64 encoded JSON object. Use that rather than the
+	// body if it's available.
 
-	this.logger.info(
-		`x402 Payment Requested, ${paymentConfig.maxAmountRequired} of token ${paymentConfig.asset} requested`,
-	);
+	let x402Config: IX402ErrorResponse;
+	const paymentRequiredHeader = headers['payment-required'] ?? headers['Payment-Required'];
+	if (paymentRequiredHeader != null) {
+		x402Config = JSON.parse(
+			Buffer.from(paymentRequiredHeader, 'base64').toString('utf-8'),
+		) as IX402ErrorResponse;
+	} else {
+		x402Config = response;
+	}
 
+	if (x402Config.x402Version === 2) {
+		// We are going to just use the first payment config for now.
+		const paymentConfig = x402Config.accepts[0];
+		if (!paymentConfig) {
+			throw new NodeOperationError(this.getNode(), 'No payment config found');
+		}
+
+		if (paymentConfig.scheme !== 'exact') {
+			throw new NodeOperationError(this.getNode(), 'Only exact scheme is supported for now');
+		}
+
+		this.logger.info(
+			`x402 V2 Payment Requested, ${paymentConfig.amount} of token ${paymentConfig.asset} requested`,
+		);
+
+		const { signature, data } = await getSignatureOperation(
+			this,
+			0,
+			paymentConfig.payTo,
+			paymentConfig.asset,
+			paymentConfig.amount,
+		);
+
+		// Now we have to create the full x402 payment header
+		const authorization = JSON.parse(data) as IERC3009Authorization;
+
+		// 1Shot returns the validBefore/validAfter as an int, but we need to convert them to a string
+		authorization.validAfter = authorization.validAfter.toString();
+		authorization.validBefore = authorization.validBefore.toString();
+
+		const xPaymentObject: X402PaymentPayloadV2ExactEvm = {
+			x402Version: 2,
+			accepted: paymentConfig,
+			payload: {
+				authorization,
+				signature,
+			},
+			resource: x402Config.resource,
+		};
+
+		const jsonString = JSON.stringify(xPaymentObject);
+		const base64Encoded = Buffer.from(jsonString, 'utf-8').toString('base64');
+
+		return { paymentHeader: base64Encoded, headerKey: 'Payment-Signature' };
+	}
+
+	// v1 fallback
+	const paymentConfig = x402Config.accepts[0];
 	if (!paymentConfig) {
 		throw new NodeOperationError(this.getNode(), 'No payment config found');
 	}
@@ -1304,6 +1365,10 @@ async function generateX402PaymentHeader(
 	if (paymentConfig.scheme !== 'exact') {
 		throw new NodeOperationError(this.getNode(), 'Only exact scheme is supported for now');
 	}
+
+	this.logger.info(
+		`x402 V1 Payment Requested, ${paymentConfig.maxAmountRequired} of token ${paymentConfig.asset} requested`,
+	);
 
 	const { signature, data } = await getSignatureOperation(
 		this,
@@ -1314,24 +1379,24 @@ async function generateX402PaymentHeader(
 	);
 
 	// Now we have to create the full x402 payment header
-	const authorization = JSON.parse(data) as IEIP3009Authorization;
+	const authorization = JSON.parse(data) as IERC3009Authorization;
 
 	// 1Shot returns the validBefore/validAfter as an int, but we need to convert them to a string
 	authorization.validAfter = authorization.validAfter.toString();
 	authorization.validBefore = authorization.validBefore.toString();
 
-	const xPaymentObject = {
+	const xPaymentObject: X402PaymentPayloadV1ExactEvm = {
 		x402Version: 1,
 		scheme: 'exact',
 		network: paymentConfig.network,
 		payload: {
-			authorization: authorization,
-			signature: signature,
+			authorization,
+			signature,
 		},
 	};
 
 	const jsonString = JSON.stringify(xPaymentObject);
 	const base64Encoded = Buffer.from(jsonString, 'utf-8').toString('base64');
 
-	return base64Encoded;
+	return { paymentHeader: base64Encoded, headerKey: 'x-payment' };
 }
