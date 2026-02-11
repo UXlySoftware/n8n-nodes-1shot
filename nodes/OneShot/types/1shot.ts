@@ -314,17 +314,9 @@ export interface IPaymentRequirements {
 	};
 }
 
-export interface IPaymentPayload {
-	x402Version: number;
-	scheme: string;
-	network: string;
-	payload: {
-		authorization: IEIP3009Authorization;
-		signature: string;
-	};
-}
+export type IPaymentPayload = X402PaymentPayloadV1ExactEvm | X402PaymentPayloadV2ExactEvm;
 
-export interface IEIP3009Authorization {
+export interface IERC3009Authorization {
 	from: string;
 	to: string;
 	value: string;
@@ -357,8 +349,57 @@ export interface X402SettleResponse {
 	networkId: EX402Network;
 }
 
-export interface IX402ErrorResponse {
-	x402Version: number;
-	error: string;
+export type IX402ErrorResponseV1 = {
+	x402Version: 1;
+	error?: string;
 	accepts: IPaymentRequirements[];
-}
+};
+
+export type X402AcceptedV2 = {
+	scheme: 'exact';
+	network: string;
+	amount: string;
+	asset: string;
+	payTo: string;
+	maxTimeoutSeconds?: number;
+	extra?: Record<string, unknown>;
+};
+
+export type IX402ErrorResponseV2 = {
+	x402Version: 2;
+	error?: string;
+	resource: {
+		url: string;
+		description?: string;
+		mimeType?: string;
+	};
+	accepts: X402AcceptedV2[];
+	extensions?: Record<string, unknown>;
+};
+
+export type IX402ErrorResponse = IX402ErrorResponseV1 | IX402ErrorResponseV2;
+
+export type X402PaymentPayloadV1ExactEvm = {
+  x402Version: 1;
+  scheme: "exact";
+	network: string;
+  payload: {
+    signature: string;
+    authorization: IERC3009Authorization;
+  };
+};
+
+/** x402 v2 X-PAYMENT payload (exact scheme, EVM). */
+export type X402PaymentPayloadV2ExactEvm = {
+  x402Version: 2;
+	accepted: X402AcceptedV2;
+  payload: {
+    signature: string;
+    authorization: IERC3009Authorization;
+  };
+  resource: {
+    url: string;
+    description?: string;
+    mimeType?: string;
+  };
+};
