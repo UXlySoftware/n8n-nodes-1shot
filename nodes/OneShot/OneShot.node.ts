@@ -958,8 +958,6 @@ async function executeX402RequestOperation(
 							// Add the x-payment header
 							requestOptions.headers![headerKey] = paymentHeader;
 
-							this.logger.debug(`headerKey: ${headerKey}, paymentHeader: ${paymentHeader}`);
-
 							// Restore requestOptions.ignoreHttpStatusErrors
 							requestOptions.ignoreHttpStatusErrors = ignoreHttpStatusErrors;
 
